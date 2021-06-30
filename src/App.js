@@ -1,7 +1,7 @@
 import * as GovUK from 'govuk-react';
-import { MemoryRouter as Router, Switch, Route } from 'react-router';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import * as dfd from "danfojs/src/index";
+import Uploader from './components/Uploader';
 
 
 function App() {
@@ -11,18 +11,26 @@ function App() {
       <GovUK.Page.WidthContainer>
         <GovUK.PhaseBanner level="beta">This is a new service - your feedback can help us improve it.</GovUK.PhaseBanner>
         <GovUK.Page.Main>
-          <GovUK.H2>Welcome to the govuk-react example application.</GovUK.H2>
-          <GovUK.Paragraph>Click Start to continue.</GovUK.Paragraph>
-          <GovUK.Button>
-            Start now
-          </GovUK.Button>
-          <GovUK.Paragraph>{get_data()}</GovUK.Paragraph>
+          <GovUK.H2>SSDA903 Data Validation Service</GovUK.H2>
+          <Switch> 
+            <Route exact path="/application" component={Uploader} />
+            <Route exact path="/" component={Start} />
+          </Switch>
         </GovUK.Page.Main>
       </GovUK.Page.WidthContainer>
-    <GovUK.Footer />
     </Router>
   );
 }
 
+function Start() {
+  return (
+    <>
+    <GovUK.Paragraph>Click Start to begin.</GovUK.Paragraph>
+    <GovUK.Button as={Link} to="/application">
+      Start now
+    </GovUK.Button>
+    </>
+  )
+}
 
 export default App;
