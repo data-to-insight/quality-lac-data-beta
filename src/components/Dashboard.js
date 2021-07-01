@@ -16,7 +16,7 @@ export default function Dashboard() {
 function Validator() {
   let rows = [];
   let headers = [];
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < 5; i++) {
     rows.push(`Row ${i}`)
     headers.push(`Header ${i}`)
   }
@@ -41,27 +41,25 @@ function Validator() {
 function DataTable({ headers, rows }) {
   let header_elements = [];
   let all_rows = [];
-  for (let header of headers) {
-    header_elements.push(<GovUK.Table.CellHeader>{header}</GovUK.Table.CellHeader>);
+  for (const [i, header] of headers.entries()) {
+    header_elements.push(<GovUK.Table.CellHeader key={i}>{header}</GovUK.Table.CellHeader>);
   }
 
-  for (let row of rows) {
+  for (const [i, row] of rows.entries()) {
     let row_elements = [];
-    for (let r of row) {
-      row_elements.push(<GovUK.Table.Cell>{r}</GovUK.Table.Cell>);
+    for (const [j, r] of row.entries()) {
+      row_elements.push(<GovUK.Table.Cell key={j}>{r}</GovUK.Table.Cell>);
     }
-    all_rows.push(<GovUK.Table.Row>{row_elements}</GovUK.Table.Row>);
+    all_rows.push(<GovUK.Table.Row key={i}>{row_elements}</GovUK.Table.Row>);
   }
 
   return (
-    <div style={{'overflow': 'scroll', 'width': '100%' }}>
-      <GovUK.Table>
+    <GovUK.Table style={{ fontSize: '1em'}}>
         <GovUK.Table.Row>
           {header_elements}
         </GovUK.Table.Row>
         {all_rows}
-      </GovUK.Table>  
-    </div>
+    </GovUK.Table>
   )
 
 }
@@ -70,17 +68,17 @@ function ChildSelector({ onSelectionChange, childIds }) {
   let [selected, setSelected] = useState();
 
   let rows = [];
-  for (let childId of childIds) {
+  for (const [i, childId] of childIds.entries()) {
     if (childId === selected) {
       rows.push(
-        <GovUK.Table.Row>
-          <GovUK.Table.Cell onClick={() => setSelected()}>{childId} - selected</GovUK.Table.Cell>
+        <GovUK.Table.Row key={i}>
+          <GovUK.Table.Cell key={i} onClick={() => setSelected()}>{childId} - selected</GovUK.Table.Cell>
         </GovUK.Table.Row>
       );
     } else {
       rows.push(
-        <GovUK.Table.Row>
-          <GovUK.Table.Cell onClick={() => setSelected(childId)}>{childId}</GovUK.Table.Cell>
+        <GovUK.Table.Row key={i}>
+          <GovUK.Table.Cell key={i} onClick={() => setSelected(childId)}>{childId}</GovUK.Table.Cell>
         </GovUK.Table.Row>
       );
     }
