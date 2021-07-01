@@ -1,19 +1,24 @@
 import * as GovUK from 'govuk-react';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import Uploader from "./Uploader";
 
 export default function Dashboard() {
-  const [uploaded, setUploaded] = useState(false);
+  const [ready, setReady] = useState(false);
+  const [fileContents, setFileContents] = useState({});
 
-  if (!uploaded) {
-    return <Uploader setUploaded={setUploaded} />
+  const addFileContent = useCallback((fileId, fileContent) => {
+    fileContents[fileId] = fileContent;
+    setFileContents(fileContents);
+  }, [fileContents])
+
+  if (!ready) {
+    return <Uploader setReady={setReady} addFileContent={addFileContent} />
   } else {
-    return <Validator />
+    return <Validator setReady={setReady} />
   }
 }
 
-
-function Validator() {
+function Validator({ setReady }) {
   let rows = [];
   let headers = [];
   for (let i = 0; i < 5; i++) {
@@ -22,6 +27,7 @@ function Validator() {
   }
 
   return (
+    <>
     <GovUK.GridRow>
       <GovUK.GridCol setWidth={'one-quarter'}>
         <GovUK.H4>Child ID</GovUK.H4>
@@ -35,6 +41,8 @@ function Validator() {
         <DataTable headers={headers} rows={[rows]} />
       </GovUK.GridCol>
     </GovUK.GridRow>
+    <GovUK.BackLink onClick={() => setReady(false)}>Back</GovUK.BackLink>
+    </>
   )
 }
 
