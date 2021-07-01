@@ -4,8 +4,11 @@ import { useDropzone } from 'react-dropzone';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-export default function Uploader() {
-  const onFilesUploaded = useCallback(acceptedFiles => console.log(acceptedFiles), [])
+export default function Uploader({ setUploaded }) {
+  const onFilesUploaded = useCallback(acceptedFiles => {
+    console.log(acceptedFiles);
+    setUploaded(true);
+  }, [setUploaded])
 
   return (
     <>
@@ -41,7 +44,7 @@ export default function Uploader() {
 
     <GovUK.GridRow>
       <GovUK.GridCol>
-        <GovUK.Button as={Link} to="/application">
+        <GovUK.Button onClick={() => setUploaded(true)}>
           Validate
         </GovUK.Button>
       </GovUK.GridCol>
@@ -53,8 +56,7 @@ export default function Uploader() {
   )
 }
 
-
-const BoxStyle = styled.div`
+const UploadStyle = styled.div`
   border: 2px dashed #999999;
   padding: 5px;
   color: #666666;
@@ -63,15 +65,14 @@ const BoxStyle = styled.div`
 function DropzoneUploader({onDrop}) {
   const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
 
-
   return (
-    <BoxStyle {...getRootProps()}>
+    <UploadStyle {...getRootProps()}>
       <input {...getInputProps()} />
       {
         isDragActive ?
           <p>Drop the files here ...</p> :
           <p>Drag and drop some files here, or click to select files</p>
       }
-    </BoxStyle>
+    </UploadStyle>
   )
 }

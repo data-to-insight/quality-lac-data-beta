@@ -1,7 +1,7 @@
 import * as GovUK from 'govuk-react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { MemoryRouter as Router, Switch, Route } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import Uploader from './components/Uploader';
+import Dashboard from './components/Dashboard';
 
 
 function App() {
@@ -12,8 +12,8 @@ function App() {
         <GovUK.PhaseBanner level="beta">This is a new service - your feedback can help us improve it.</GovUK.PhaseBanner>
         <GovUK.Page.Main>
           <GovUK.H2>SSDA903 Data Validation Service</GovUK.H2>
-          <Switch> 
-            <Route exact path="/application" component={Uploader} />
+          <Switch>
+            <Route path="/application" component={Dashboard} />
             <Route exact path="/" component={Start} />
           </Switch>
         </GovUK.Page.Main>
@@ -26,7 +26,7 @@ function Start() {
   return (
     <>
     <GovUK.Paragraph>Click Start to begin.</GovUK.Paragraph>
-    <GovUK.Button as={Link} to="/application">
+    <GovUK.Button start as={Link} to="/application">
       Start now
     </GovUK.Button>
     </>
