@@ -1,6 +1,7 @@
-const pyodide = window.pyodide;
 
 export default function handleUploaded903Data(uploadedFiles) {
+    const pyodide = window.pyodide;
+
     console.log('Passing uploaded data to Pyodide...')
     pyodide.globals.set("uploaded_files", uploadedFiles)
     pyodide.runPython(`
@@ -19,8 +20,8 @@ export default function handleUploaded903Data(uploadedFiles) {
         csv_file = StringIO(file)
         df = pd.read_csv(csv_file)
 
-        files[get_file_type(df)] = list(df.itertuples())
+        files[get_file_type(df)] = [t._asdict() for t in df.itertuples()]
     `)
 
-    return pyodide.globals.get("files").tojs()
+    return pyodide.globals.get("files").toJs()
 }

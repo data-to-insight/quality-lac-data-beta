@@ -3,7 +3,7 @@ import ChildSelector from './ChildSelector';
 import DataTable from './DataTable';
 
 interface ValidatorProps {
-    parsedData: Map<string, Array<Object>>
+    parsedData: Map<string, Array<Map<string, any>>>
 }
 
 export default function Validator({ parsedData }: ValidatorProps) {
@@ -14,12 +14,18 @@ export default function Validator({ parsedData }: ValidatorProps) {
     headers.push(`Header ${i}`)
   }
 
+
+  let childIds: Set<number> = new Set();
+  parsedData.get('HEADER')?.forEach(childData => {
+      childIds.add(childData.get('CHILD'));
+  })
+
   return (
     <>
     <GovUK.GridRow>
       <GovUK.GridCol setWidth={'one-quarter'}>
         <GovUK.H4>Child ID</GovUK.H4>
-        <ChildSelector childIds={[100, 200, 300]}/>
+        <ChildSelector childIds={Array.from(childIds)}/>
       </GovUK.GridCol>
       <GovUK.GridCol setWidth={'three-quarter'}>
         <GovUK.H4>Header</GovUK.H4>
