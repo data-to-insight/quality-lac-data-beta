@@ -1,19 +1,33 @@
 import * as GovUK from 'govuk-react';
-import { useCallback, useState } from 'react';
-import { useDropzone } from 'react-dropzone';
+import { useCallback, useState, ReactElement } from 'react';
+import { FileRejection, useDropzone } from 'react-dropzone';
 import styled from 'styled-components';
 
-export default function Uploader({ currentFiles, addFileContent }) {
-  const [tabIndex, setTabIndex] = useState(0);
+interface UploaderProps { 
+  currentFiles: Map<string, string>, 
+  addFileContent: (fileId: string, fileContent: string) => void 
+};
 
-  const onFilesUploaded = useCallback(({description, acceptedFiles}) => {
+type UploadedFiles = {description: string, acceptedFiles: Array<File>};
+type FilesCallback = (arg: UploadedFiles) => void;
+
+interface DropzoneUploaderProps {
+  onFiles: FilesCallback,
+  description: string,
+  accept: string,
+};
+
+export default function Uploader({ currentFiles, addFileContent }: UploaderProps): ReactElement {
+  const [tabIndex, setTabIndex] = useState<number>(0);
+
+  const onFilesUploaded = useCallback<FilesCallback>(({description, acceptedFiles}) => {
     acceptedFiles.forEach( file => {
       const reader = new FileReader()
 
       reader.onabort = () => console.log('File reading failed.')
       reader.onerror = () => console.log('File reading error.')
       reader.onload = () =>  {
-        const fileText = reader.result;
+        const fileText = reader.result as string;
         console.log(`Finished reading (${description}) file ${file.name}.`);
         addFileContent(file.name, fileText);
       }
@@ -77,15 +91,17 @@ const UploadStyle = styled.div`
   color: #666666;
 `
 
-function DropzoneUploader({onFiles, description, accept}) {
-  let [error, setError] = useState();
+function DropzoneUploader({onFiles, description, accept}: DropzoneUploaderProps): ReactElement {
+  let [error, setError] = useState<string | null>();
 
-  const onDrop = (acceptedFiles, rejectedFiles) => {
-    onFiles({ description, acceptedFiles });
-    rejectedFiles.forEach( file => {
-      setError(file.errors[0].message)
-    });
-  }
+  const onDrop = useCallback(
+    (acceptedFiles, rejectedFiles) => {
+      onFiles({ description, acceptedFiles });
+
+      rejectedFiles.forEach( (file: FileRejection) => {
+        setError(file.errors[0].message)
+      });
+  }, [setError, description, onFiles])
 
   const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop, accept})
 
