@@ -1,32 +1,39 @@
 import * as GovUK from 'govuk-react';
 import { ReactElement } from 'react';
+import { DataRow } from '../types';
 
 interface DataTableProps {
-  headers: Array<string>,
-  rows: Array<Array<string>>,
+  rowData: Array<DataRow> | undefined,
 }
 
-export default function DataTable({ headers, rows }: DataTableProps): ReactElement {
+export default function DataTable({ rowData }: DataTableProps): ReactElement {
   let header_elements = [];
-  let all_rows = [];
-  for (const [i, header] of headers.entries()) {
-    header_elements.push(<GovUK.Table.CellHeader key={i}>{header}</GovUK.Table.CellHeader>);
-  }
+  let all_rows = []
 
-  for (const [i, row] of rows.entries()) {
-    let row_elements = [];
-    for (const [j, r] of row.entries()) {
-      row_elements.push(<GovUK.Table.Cell key={j}>{r}</GovUK.Table.Cell>);
+  if (rowData) {
+    if (rowData.length > 0) {
+      for (const [i, header] of Array.from(rowData[0].keys()).entries()) {
+        header_elements.push(<GovUK.Table.CellHeader key={i}>{header}</GovUK.Table.CellHeader>);
+      }
     }
-    all_rows.push(<GovUK.Table.Row key={i}>{row_elements}</GovUK.Table.Row>);
-  }
 
-  return (
-    <GovUK.Table style={{ fontSize: '1em'}}>
-        <GovUK.Table.Row>
-          {header_elements}
-        </GovUK.Table.Row>
-        {all_rows}
-    </GovUK.Table>
-  )
+    for (const [i, row] of rowData.entries()) {
+      let row_elements = [];
+      for (const [j, r] of Array.from(row.values()).entries()) {
+        row_elements.push(<GovUK.Table.Cell key={j}>{r}</GovUK.Table.Cell>);
+      }
+      all_rows.push(<GovUK.Table.Row key={i}>{row_elements}</GovUK.Table.Row>);
+    }
+
+    return (
+      <GovUK.Table style={{ fontSize: '1em'}}>
+          <GovUK.Table.Row>
+            {header_elements}
+          </GovUK.Table.Row>
+          {all_rows}
+      </GovUK.Table>
+    )
+  } else {
+    return <GovUK.H6>No data found for table.</GovUK.H6>
+  }
 }
