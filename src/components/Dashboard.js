@@ -31,11 +31,12 @@ export default function Dashboard() {
 
 
   return (
-    <GovUK.LoadingBox title="Loading Python..." loading={!pythonLoaded}>
-      {ready
-        ? <Validator />
-        : <Uploader key={fileContents} currentFiles={fileContents} addFileContent={addFileContent} />
-      }
+    <>
+    {ready
+      ? <Validator />
+      : <Uploader key={fileContents} currentFiles={fileContents} addFileContent={addFileContent} />
+    }
+    <GovUK.LoadingBox loading={!pythonLoaded}>
       <GovUK.GridRow>
         <GovUK.GridCol>
           <GovUK.GridRow>
@@ -57,6 +58,7 @@ export default function Dashboard() {
         </GovUK.GridCol>
       </GovUK.GridRow>
     </GovUK.LoadingBox>
+    </>
   )
 }
 
@@ -110,7 +112,6 @@ function DataTable({ headers, rows }) {
         {all_rows}
     </GovUK.Table>
   )
-
 }
 
 function ChildSelector({ onSelectionChange, childIds }) {
