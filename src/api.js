@@ -10,9 +10,9 @@ export default function handleUploaded903Data(uploadedFiles) {
 
     def get_file_type(df):
         if 'UPN' in df.columns:
-            return 'HEADER'
+            return 'Header'
         elif 'DECOM' in df.columns:
-            return 'EPISODE'
+            return 'Episodes'
 
     files = {}
 
@@ -20,7 +20,7 @@ export default function handleUploaded903Data(uploadedFiles) {
         csv_file = StringIO(file)
         df = pd.read_csv(csv_file)
 
-        files[get_file_type(df)] = [t._asdict() for t in df.itertuples()]
+        files[get_file_type(df)] = [t._asdict() for t in df.itertuples(index=False)]
     `)
 
     return pyodide.globals.get("files").toJs()
