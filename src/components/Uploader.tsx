@@ -66,9 +66,9 @@ export default function Uploader({ currentFiles, addFileContent }: UploaderProps
       </GovUK.Tabs.Panel>
     </GovUK.Tabs>
 
-    <GovUK.Details summary="Uploaded files" open={Object.keys(currentFiles).length > 0}>
+    <GovUK.Details summary="Uploaded files" open={currentFiles.size > 0}>
       <GovUK.UnorderedList>
-        {Object.keys(currentFiles).map(key => <GovUK.ListItem key={key}>{key.toString()}</GovUK.ListItem>)}
+        {Array.from(currentFiles.keys()).map(key => <GovUK.ListItem key={key}>{key.toString()}</GovUK.ListItem>)}
       </GovUK.UnorderedList>
     </GovUK.Details>
 
