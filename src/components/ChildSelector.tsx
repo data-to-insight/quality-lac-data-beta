@@ -26,8 +26,10 @@ export default function ChildSelector({ childIds }: ChildSelectorProps) {
   }
 
   return (
-    <GovUK.Table>
-      {rows}
-    </GovUK.Table>
+    <div style={{'overflow': 'scroll', 'height': '300px'}}>
+      <GovUK.Table>
+        {rows}
+      </GovUK.Table>
+    </div>
   )
 }
