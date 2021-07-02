@@ -2,7 +2,11 @@ import * as GovUK from 'govuk-react';
 import ChildSelector from './ChildSelector';
 import DataTable from './DataTable';
 
-export default function Validator() {
+interface ValidatorProps {
+    parsedData: Map<string, Array<Object>>
+}
+
+export default function Validator({ parsedData }: ValidatorProps) {
   let rows = [];
   let headers = [];
   for (let i = 0; i < 5; i++) {

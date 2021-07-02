@@ -9,7 +9,7 @@ export default function Dashboard() {
   const [ready, setReady] = useState(false);
   const [pythonLoaded, setPythonLoaded] = useState(false)
   const [fileContents, setFileContents] = useState(new Map());
-  const [parsedData, setParsedData] = useState({})
+  const [parsedData, setParsedData] = useState(new Map())
 
   useEffect(() => {
     (async () => {
@@ -40,7 +40,7 @@ export default function Dashboard() {
   return (
     <>
     {ready
-      ? <Validator />
+      ? <Validator parsedData={parsedData} />
       : <Uploader currentFiles={fileContents} addFileContent={addFileContent} />
     }
     <GovUK.LoadingBox loading={(!pythonLoaded) as boolean}>
