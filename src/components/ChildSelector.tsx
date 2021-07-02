@@ -1,12 +1,12 @@
 import * as GovUK from 'govuk-react';
-import { useState } from 'react';
 
 interface ChildSelectorProps {
-    childIds: Array<number>
+    childIds: Array<number>,
+    selected: number | null,
+    setSelected: (arg: number | null) => void,
 }
 
-export default function ChildSelector({ childIds }: ChildSelectorProps) {
-  let [selected, setSelected] = useState<number | null>();
+export default function ChildSelector({ childIds, selected, setSelected }: ChildSelectorProps) {
 
   let rows = [];
   for (const [i, childId] of childIds.entries()) {
