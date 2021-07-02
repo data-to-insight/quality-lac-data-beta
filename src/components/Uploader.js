@@ -1,10 +1,11 @@
 import * as GovUK from 'govuk-react';
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-export default function Uploader({ setReady, addFileContent }) {
+export default function Uploader({ currentFiles, addFileContent }) {
+  const [tabIndex, setTabIndex] = useState(0);
+
   const onFilesUploaded = useCallback(({description, acceptedFiles}) => {
     acceptedFiles.forEach( file => {
       const reader = new FileReader()
@@ -27,42 +28,45 @@ export default function Uploader({ setReady, addFileContent }) {
       This tool will not send data to any third party. It uses the browser as an application to locate files in your computer and run scripts
       on them to identify errors. Once the browser is loaded, you can locate the files and run the validation offline.
     </GovUK.Paragraph>
-    <GovUK.Paragraph>Upload either CSV or XML files.</GovUK.Paragraph>
+    
+    <GovUK.Tabs>
+      <GovUK.Tabs.Title>Upload</GovUK.Tabs.Title>
+      <GovUK.Tabs.List>
+        <GovUK.Tabs.Tab onClick={() => setTabIndex(0)} selected={tabIndex === 0}>CSV Upload</GovUK.Tabs.Tab>
+        <GovUK.Tabs.Tab onClick={() => setTabIndex(1)} selected={tabIndex === 1}>XML Upload</GovUK.Tabs.Tab>
+      </GovUK.Tabs.List>
+      <GovUK.Tabs.Panel selected={tabIndex === 0}>
+        <GovUK.GridRow>
+          <GovUK.GridCol setWidth="one-half">
+            <GovUK.H6>Previous year</GovUK.H6>
+            <DropzoneUploader description='prevYear' onFiles={onFilesUploaded} accept='.csv'/>
+          </GovUK.GridCol>
+          <GovUK.GridCol>
+            <GovUK.H6>This year</GovUK.H6>
+            <DropzoneUploader description='thisYear' onFiles={onFilesUploaded} accept='.csv'/>
+          </GovUK.GridCol>
+        </GovUK.GridRow>
+      </GovUK.Tabs.Panel>
+      <GovUK.Tabs.Panel selected={tabIndex === 1}>
+        <GovUK.GridRow>
+          <GovUK.GridCol setWidth="one-half">
+            <GovUK.H6>Previous year</GovUK.H6>
+            <DropzoneUploader description='prevYear' onFiles={onFilesUploaded} accept='.xml'/>
+          </GovUK.GridCol>
+          <GovUK.GridCol>
+            <GovUK.H6>This year</GovUK.H6>
+            <DropzoneUploader description='thisYear' onFiles={onFilesUploaded} accept='.xml'/>
+          </GovUK.GridCol>
+        </GovUK.GridRow>
+      </GovUK.Tabs.Panel>
+    </GovUK.Tabs>
 
-    <GovUK.H3>CSV Upload</GovUK.H3>
-    <GovUK.GridRow mb={8}>
-      <GovUK.GridCol setWidth="one-half">
-        <GovUK.H6>Previous year</GovUK.H6>
-        <DropzoneUploader description='prevYear' onFiles={onFilesUploaded} accept='.csv'/>
-      </GovUK.GridCol>
-      <GovUK.GridCol>
-        <GovUK.H6>This year</GovUK.H6>
-        <DropzoneUploader description='thisYear' onFiles={onFilesUploaded} accept='.csv'/>
-      </GovUK.GridCol>
-    </GovUK.GridRow>
+    <GovUK.Details summary="Uploaded files">
+      <GovUK.UnorderedList>
+        {Object.keys(currentFiles).map(key => <GovUK.ListItem key={key}>{key.toString()}</GovUK.ListItem>)}
+      </GovUK.UnorderedList>
+    </GovUK.Details>
 
-    <GovUK.H3>XML Upload</GovUK.H3>
-    <GovUK.GridRow mb={8}>
-      <GovUK.GridCol setWidth="one-half">
-        <GovUK.H6>Previous year</GovUK.H6>
-        <DropzoneUploader description='prevYear' onFiles={onFilesUploaded} accept='.xml'/>
-      </GovUK.GridCol>
-      <GovUK.GridCol>
-        <GovUK.H6>This year</GovUK.H6>
-        <DropzoneUploader description='thisYear' onFiles={onFilesUploaded} accept='.xml'/>
-      </GovUK.GridCol>
-    </GovUK.GridRow>
-
-    <GovUK.GridRow>
-      <GovUK.GridCol>
-        <GovUK.Button onClick={() => setReady(true)}>
-          Validate
-        </GovUK.Button>
-      </GovUK.GridCol>
-      <GovUK.GridCol>
-        <GovUK.Link as={Link} to="/">Go back</GovUK.Link>
-      </GovUK.GridCol>
-    </GovUK.GridRow>
     </>
   )
 }

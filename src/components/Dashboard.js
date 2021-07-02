@@ -1,24 +1,66 @@
 import * as GovUK from 'govuk-react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Uploader from "./Uploader";
+import { Link } from 'react-router-dom';
 
 export default function Dashboard() {
   const [ready, setReady] = useState(false);
+  const [pythonLoaded, setPythonLoaded] = useState(false)
   const [fileContents, setFileContents] = useState({});
 
+  useEffect(() => {
+    (async () => {
+      if (!window.pyodide.runPython) {
+        await window.loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.17.0/full/" });
+        await window.pyodide.loadPackage('pandas')
+        console.log('Loaded pyodide.');
+      } else {
+        console.log('Pyodide already loaded.')
+      }
+
+      setPythonLoaded(true);
+
+    })();
+  }, [])
+
   const addFileContent = useCallback((fileId, fileContent) => {
-    fileContents[fileId] = fileContent;
-    setFileContents(fileContents);
+    let tempFileContents = {...fileContents}
+    tempFileContents[fileId] = fileContent;
+    setFileContents(tempFileContents);
   }, [fileContents])
 
-  if (!ready) {
-    return <Uploader setReady={setReady} addFileContent={addFileContent} />
-  } else {
-    return <Validator setReady={setReady} />
-  }
+
+  return (
+    <GovUK.LoadingBox title="Loading Python..." loading={!pythonLoaded}>
+      {ready
+        ? <Validator />
+        : <Uploader key={fileContents} currentFiles={fileContents} addFileContent={addFileContent} />
+      }
+      <GovUK.GridRow>
+        <GovUK.GridCol>
+          <GovUK.GridRow>
+            <GovUK.GridCol>
+              {pythonLoaded
+                ? <GovUK.Button onClick={() => setReady(true)}>Validate</GovUK.Button>
+                : <GovUK.Button buttonColour='gray'>Python loading...</GovUK.Button>
+              }
+            </GovUK.GridCol>
+            <GovUK.GridCol>
+              <GovUK.Button onClick={() => setReady(false)}>
+                Re-Upload
+              </GovUK.Button>
+            </GovUK.GridCol>
+          </GovUK.GridRow>
+        </GovUK.GridCol>
+        <GovUK.GridCol>
+          <GovUK.BackLink as={Link} to="/">Go back</GovUK.BackLink>
+        </GovUK.GridCol>
+      </GovUK.GridRow>
+    </GovUK.LoadingBox>
+  )
 }
 
-function Validator({ setReady }) {
+function Validator() {
   let rows = [];
   let headers = [];
   for (let i = 0; i < 5; i++) {
@@ -41,7 +83,6 @@ function Validator({ setReady }) {
         <DataTable headers={headers} rows={[rows]} />
       </GovUK.GridCol>
     </GovUK.GridRow>
-    <GovUK.BackLink onClick={() => setReady(false)}>Back</GovUK.BackLink>
     </>
   )
 }
@@ -97,5 +138,4 @@ function ChildSelector({ onSelectionChange, childIds }) {
       {rows}
     </GovUK.Table>
   )
-
 }
