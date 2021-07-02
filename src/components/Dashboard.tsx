@@ -1,6 +1,7 @@
 import * as GovUK from 'govuk-react';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import handleUploaded903Data from './../api';
 import Validator from "./Validator";
 import Uploader from "./Uploader";
 
@@ -8,6 +9,7 @@ export default function Dashboard() {
   const [ready, setReady] = useState(false);
   const [pythonLoaded, setPythonLoaded] = useState(false)
   const [fileContents, setFileContents] = useState(new Map());
+  const [parsedData, setParsedData] = useState({})
 
   useEffect(() => {
     (async () => {
@@ -25,9 +27,15 @@ export default function Dashboard() {
   }, [])
 
   const addFileContent = useCallback((fileId, fileContent) => {
-    setFileContents(new Map(fileContents.set(fileId, fileContent)));
+    let newFileContents = new Map(fileContents.set(fileId, fileContent));
+    setFileContents(newFileContents);
   }, [fileContents])
 
+  const runValidation = useCallback(() => {
+    let result = handleUploaded903Data(fileContents);
+    setParsedData(result);
+    setReady(true);
+  }, [fileContents])
 
   return (
     <>
@@ -35,13 +43,13 @@ export default function Dashboard() {
       ? <Validator />
       : <Uploader currentFiles={fileContents} addFileContent={addFileContent} />
     }
-    <GovUK.LoadingBox loading={!pythonLoaded}>
+    <GovUK.LoadingBox loading={(!pythonLoaded) as boolean}>
       <GovUK.GridRow>
         <GovUK.GridCol>
           <GovUK.GridRow>
             <GovUK.GridCol>
               {pythonLoaded
-                ? <GovUK.Button onClick={() => setReady(true)}>Validate</GovUK.Button>
+                ? <GovUK.Button onClick={runValidation}>Validate</GovUK.Button>
                 : <GovUK.Button buttonColour='gray'>Python loading...</GovUK.Button>
               }
             </GovUK.GridCol>
