@@ -10,6 +10,7 @@ export default function Dashboard() {
   const [pythonLoaded, setPythonLoaded] = useState(false)
   const [fileContents, setFileContents] = useState(new Map());
   const [parsedData, setParsedData] = useState(new Map())
+  const [dataErrors, setDataErrors] = useState(new Map())
 
   useEffect(() => {
     (async () => {
@@ -32,21 +33,23 @@ export default function Dashboard() {
   }, [fileContents])
 
   const runValidation = useCallback(async () => {
-    let result = await handleUploaded903Data(fileContents);
-    setParsedData(result);
+    let { data, errors } = await handleUploaded903Data(fileContents);
+    setParsedData(data);
+    setDataErrors(errors);
     setReady(true);
   }, [fileContents])
 
   const clearAndUpload = useCallback(() => {
     setReady(false);
     setParsedData(new Map());
+    setDataErrors(new Map());
     setFileContents(new Map());
   }, [])
 
   return (
     <>
     {ready
-      ? <Validator parsedData={parsedData} />
+      ? <Validator parsedData={parsedData} dataErrors={dataErrors} />
       : <Uploader currentFiles={fileContents} addFileContent={addFileContent} />
     }
     <GovUK.LoadingBox loading={(!pythonLoaded) as boolean}>
