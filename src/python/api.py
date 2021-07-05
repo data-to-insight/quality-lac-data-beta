@@ -54,4 +54,4 @@ errors = {file_name: defaultdict(list) for file_name in dfs}
 for error, error_incidences in validated:
     for file_name, locations in error_incidences.items():
         for location in locations:
-            errors[file_name][location].append(error.code)
+            errors[file_name][int(location)].append(error.code)
