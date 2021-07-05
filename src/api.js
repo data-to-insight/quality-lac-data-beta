@@ -12,5 +12,7 @@ export async function handleUploaded903Data(uploadedFiles) {
     const data = pyodide.globals.get("js_files").toJs();
     const errors = pyodide.globals.get("errors");
 
+    console.log('Python calculation complete.')
+
     return { data, errors }
 }
