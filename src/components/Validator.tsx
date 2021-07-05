@@ -2,14 +2,15 @@ import * as GovUK from 'govuk-react';
 import ChildSelector from './ChildSelector';
 import DataTable from './DataTable';
 import { useState, useMemo } from 'react';
-import { DataRow, ParsedData, ErrorIncidences } from './../types';
+import { DataRow, ParsedData, ErrorIncidences, ErrorDefinitions } from './../types';
 
 interface ValidatorProps {
-  parsedData: Map<string, Array<DataRow>>
-  dataErrors: ErrorIncidences
+  parsedData: Map<string, Array<DataRow>>,
+  dataErrors: ErrorIncidences,
+  errorDefinitions: ErrorDefinitions,
 }
 
-export default function Validator({ parsedData, dataErrors }: ValidatorProps) {
+export default function Validator({ parsedData, dataErrors, errorDefinitions }: ValidatorProps) {
   let [selectedChild, setSelectedChild] = useState<number | null>(null);
 
   const headerData = useMemo(() => {

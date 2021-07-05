@@ -7,10 +7,11 @@ import Uploader from "./Uploader";
 
 export default function Dashboard() {
   const [ready, setReady] = useState(false);
-  const [pythonLoaded, setPythonLoaded] = useState(false)
+  const [pythonLoaded, setPythonLoaded] = useState(false);
   const [fileContents, setFileContents] = useState(new Map());
-  const [parsedData, setParsedData] = useState(new Map())
-  const [dataErrors, setDataErrors] = useState(new Map())
+  const [parsedData, setParsedData] = useState(new Map());
+  const [dataErrors, setDataErrors] = useState(new Map());
+  const [errorDefinitions, setErrorDefinitions] = useState(new Map());
 
   useEffect(() => {
     (async () => {
@@ -33,9 +34,10 @@ export default function Dashboard() {
   }, [fileContents])
 
   const runValidation = useCallback(async () => {
-    let { data, errors } = await handleUploaded903Data(fileContents);
+    let { data, errors, errorDefinitions } = await handleUploaded903Data(fileContents);
     setParsedData(data);
     setDataErrors(errors);
+    setErrorDefinitions(errorDefinitions);
     setReady(true);
   }, [fileContents])
 
@@ -43,13 +45,14 @@ export default function Dashboard() {
     setReady(false);
     setParsedData(new Map());
     setDataErrors(new Map());
+    setErrorDefinitions(new Map());
     setFileContents(new Map());
   }, [])
 
   return (
     <>
     {ready
-      ? <Validator parsedData={parsedData} dataErrors={dataErrors} />
+      ? <Validator parsedData={parsedData} dataErrors={dataErrors} errorDefinitions={errorDefinitions} />
       : <Uploader currentFiles={fileContents} addFileContent={addFileContent} />
     }
     <GovUK.LoadingBox loading={(!pythonLoaded) as boolean}>

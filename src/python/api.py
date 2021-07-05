@@ -48,7 +48,7 @@ tested_errors = [fake_error]
 validated = [f(dfs) for f in tested_errors]
 
 # Passed to JS
-error_definitions = [asdict(e) for e, _ in validated]
+error_definitions = {e.code: asdict(e) for e, _ in validated}
 
 errors = {file_name: defaultdict(list) for file_name in dfs}
 for error, error_incidences in validated:
