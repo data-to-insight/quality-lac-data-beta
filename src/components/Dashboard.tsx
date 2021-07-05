@@ -1,7 +1,7 @@
 import * as GovUK from 'govuk-react';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import handleUploaded903Data from './../api';
+import { handleUploaded903Data } from './../api';
 import Validator from "./Validator";
 import Uploader from "./Uploader";
 
@@ -31,8 +31,8 @@ export default function Dashboard() {
     setFileContents(newFileContents);
   }, [fileContents])
 
-  const runValidation = useCallback(() => {
-    let result = handleUploaded903Data(fileContents);
+  const runValidation = useCallback(async () => {
+    let result = await handleUploaded903Data(fileContents);
     setParsedData(result);
     setReady(true);
   }, [fileContents])
