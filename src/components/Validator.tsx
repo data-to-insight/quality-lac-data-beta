@@ -54,7 +54,7 @@ export default function Validator({ parsedData, dataErrors, errorDefinitions }: 
 
   return (
     <>
-    <GovUK.GridRow>
+    <GovUK.GridRow mb={5}>
       <GovUK.GridCol setWidth={'one-quarter'}>
         <GovUK.H4>Child ID</GovUK.H4>
         <ChildSelector childIds={childIdsWithErrors} selected={selectedChild} setSelected={setSelectedChild} />
