@@ -37,6 +37,12 @@ export default function Dashboard() {
     setReady(true);
   }, [fileContents])
 
+  const clearAndUpload = useCallback(() => {
+    setReady(false);
+    setParsedData(new Map());
+    setFileContents(new Map());
+  }, [])
+
   return (
     <>
     {ready
@@ -54,8 +60,8 @@ export default function Dashboard() {
               }
             </GovUK.GridCol>
             <GovUK.GridCol>
-              <GovUK.Button onClick={() => setReady(false)}>
-                Re-Upload
+              <GovUK.Button onClick={clearAndUpload}>
+                Clear Data and Reupload
               </GovUK.Button>
             </GovUK.GridCol>
           </GovUK.GridRow>

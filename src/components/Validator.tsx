@@ -38,7 +38,7 @@ export default function Validator({ parsedData }: ValidatorProps) {
         <GovUK.H4>Child ID</GovUK.H4>
         <ChildSelector childIds={Array.from(childIds)} selected={selectedChild} setSelected={setSelectedChild} />
       </GovUK.GridCol>
-      <GovUK.GridCol>
+      <GovUK.GridCol setWidth='75%'>
         {selectedChild
         ? (
             <>
