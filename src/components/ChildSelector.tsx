@@ -13,7 +13,7 @@ export default function ChildSelector({ childIds, selected, setSelected }: Child
     if (childId === selected) {
       rows.push(
         <GovUK.Table.Row key={i}>
-          <GovUK.Table.Cell key={i} onClick={() => setSelected(null)}>{childId} - selected</GovUK.Table.Cell>
+          <GovUK.Table.Cell key={i} onClick={() => setSelected(null)} style={{backgroundColor: '#ccc'}}>{childId}</GovUK.Table.Cell>
         </GovUK.Table.Row>
       );
     } else {
