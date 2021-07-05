@@ -1,5 +1,6 @@
 # type: ignore
 
+from collections import defaultdict
 from dataclasses import dataclass, asdict
 import pandas as pd
 from io import StringIO
@@ -48,4 +49,9 @@ validated = [f(dfs) for f in tested_errors]
 
 # Passed to JS
 error_definitions = [asdict(e) for e, _ in validated]
-errors = {e.code: incidences for e, incidences in validated}
+
+errors = {file_name: defaultdict(list) for file_name in dfs}
+for error, error_incidences in validated:
+    for file_name, locations in error_incidences.items():
+        for location in locations:
+            errors[file_name][location].append(error.code)
