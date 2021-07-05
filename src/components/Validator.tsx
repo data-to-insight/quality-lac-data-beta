@@ -1,7 +1,7 @@
 import * as GovUK from 'govuk-react';
 import ChildSelector from './ChildSelector';
 import DataTable from './DataTable';
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo, ReactElement } from 'react';
 import { DataRow, ParsedData, ErrorIncidences, ErrorDefinitions } from './../types';
 
 interface ValidatorProps {
@@ -45,12 +45,23 @@ export default function Validator({ parsedData, dataErrors, errorDefinitions }: 
       const childId = childData.get('CHILD');
       if (!uniqueIds.has(childId)) {
         uniqueIds.add(childId);
-        let num_errors = countErrorsForChild(parsedData, dataErrors, childId);
+        let num_errors = getErrorsForChild(parsedData, dataErrors, childId).length;
         childIds.push([childId, num_errors]);
       }
     });
     return childIds;
   }, [parsedData, dataErrors])
+
+
+  const childErrors = useMemo<Array<ReactElement>>(() => {
+    let errors = getErrorsForChild(parsedData, dataErrors, selectedChild);
+    const errorToString = ((errorCode: string) => {
+      let error = errorDefinitions.get(errorCode);
+      return `Error ${error?.get('code')} - ${error?.get('description')}`
+    });
+
+    return errors.map(e => <GovUK.ListItem>{errorToString(e)}</GovUK.ListItem>);
+  }, [parsedData, dataErrors, errorDefinitions, selectedChild])
 
   return (
     <>
@@ -68,6 +79,17 @@ export default function Validator({ parsedData, dataErrors, errorDefinitions }: 
             <GovUK.SectionBreak mb={9}/>
             <GovUK.H4>Episodes</GovUK.H4>
             <DataTable rowData={filteredData.get('Episodes')} highlight={errorLocations.get('Episodes')} />
+            {childErrors.length > 0
+              ? (
+                <>
+                <GovUK.H4>Errors</GovUK.H4>
+                <GovUK.UnorderedList>
+                  {childErrors}
+                </GovUK.UnorderedList>
+                </>
+                )
+              : <></>
+            }
             </>
           )
         : <GovUK.H4>Select a child...</GovUK.H4>
@@ -90,20 +112,20 @@ function filterDataToChildId(parsedData: ParsedData, selectedChild: number | nul
   return rowData;
 }
 
-function countErrorsForChild(parsedData: ParsedData, dataErrors: ErrorIncidences, childId: number): number {
-  let count = 0;
+function getErrorsForChild(parsedData: ParsedData, dataErrors: ErrorIncidences, childId: number | null): Array<string> {
+  if (!childId) { return []; }
+
+  let allErrors: Array<string> = [];
 
   parsedData.forEach((data, fileName) => {
     data.forEach(row => {
       if (row.get('CHILD') === childId) {
         let index = row.get('Index');
-        let has_error = dataErrors.get(fileName)?.get(index)
-        if (has_error) {
-          count += has_error.length;
-        }
+        let errors = dataErrors.get(fileName)?.get(index);
+        if (errors) {errors.forEach(e => allErrors.push(e))}
       }
     })
   })
 
-  return count;
+  return allErrors;
 }
