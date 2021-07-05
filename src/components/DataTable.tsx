@@ -8,7 +8,7 @@ interface DataTableProps {
 
 export default function DataTable({ rowData }: DataTableProps): ReactElement {
   let header_elements = [];
-  let all_rows = []
+  let all_rows = [];
 
   if (rowData) {
     if (rowData.length > 0) {

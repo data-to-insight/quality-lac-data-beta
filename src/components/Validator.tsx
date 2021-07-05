@@ -13,11 +13,7 @@ interface ValidatorProps {
 export default function Validator({ parsedData, dataErrors, errorDefinitions }: ValidatorProps) {
   let [selectedChild, setSelectedChild] = useState<number | null>(null);
 
-  const headerData = useMemo(() => {
-    return filterDataToChildId(parsedData, selectedChild, 'Header');
-  }, [parsedData, selectedChild])
-
-  const episodesData = useMemo(() => {
+  const filteredData = useMemo(() => {
     let filteredData: ParsedData = new Map();
     Array.from(parsedData.keys()).forEach(key => {
       filteredData.set(key, filterDataToChildId(parsedData, selectedChild, key))
@@ -51,10 +47,10 @@ export default function Validator({ parsedData, dataErrors, errorDefinitions }: 
         ? (
             <>
             <GovUK.H4>Header</GovUK.H4>
-            <DataTable rowData={headerData} />
+            <DataTable rowData={filteredData.get('Header')} />
             <GovUK.SectionBreak mb={9}/>
             <GovUK.H4>Episodes</GovUK.H4>
-            <DataTable rowData={episodesData.get('Episodes')} />
+            <DataTable rowData={filteredData.get('Episodes')} />
             </>
           )
         : <GovUK.H4>Select a child...</GovUK.H4>
