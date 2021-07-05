@@ -7,11 +7,10 @@ export async function handleUploaded903Data(uploadedFiles) {
     pyodide.globals.set("uploaded_files", uploadedFiles)
 
     const script = await (await fetch(pythonAPI)).text();
-    pyodide.runPython(script)
+    pyodide.runPython(script);
 
-    return pyodide.globals.get("js_files").toJs()
-}
+    const data = pyodide.globals.get("js_files").toJs();
+    const errors = pyodide.globals.get("errors");
 
-export function get903Errors(df) {
-
+    return { data, errors }
 }
