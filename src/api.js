@@ -1,27 +1,19 @@
+import pythonAPI from './python/api.py'
 
-export default function handleUploaded903Data(uploadedFiles) {
+export async function handleUploaded903Data(uploadedFiles) {
     const pyodide = window.pyodide;
 
     console.log('Passing uploaded data to Pyodide...')
     pyodide.globals.set("uploaded_files", uploadedFiles)
-    pyodide.runPython(`
-    import pandas as pd
-    from io import StringIO
 
-    def get_file_type(df):
-        if 'UPN' in df.columns:
-            return 'Header'
-        elif 'DECOM' in df.columns:
-            return 'Episodes'
+    const script = await (await fetch(pythonAPI)).text();
+    pyodide.runPython(script);
 
-    files = {}
+    const data = pyodide.globals.get("js_files").toJs();
+    const errors = pyodide.globals.get("errors").toJs();
+    const errorDefinitions = pyodide.globals.get("error_definitions").toJs();
 
-    for file_name, file in uploaded_files.to_py().items():
-        csv_file = StringIO(file)
-        df = pd.read_csv(csv_file)
+    console.log('Python calculation complete.')
 
-        files[get_file_type(df)] = [t._asdict() for t in df.itertuples(index=False)]
-    `)
-
-    return pyodide.globals.get("files").toJs()
+    return { data, errors, errorDefinitions }
 }
