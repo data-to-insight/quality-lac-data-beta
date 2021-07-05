@@ -21,6 +21,23 @@ export default function Validator({ parsedData, dataErrors, errorDefinitions }: 
     return filteredData;
   }, [parsedData, selectedChild])
 
+  const errorLocations = useMemo(() => {
+    const errorLocations = new Map();
+    dataErrors.forEach((errorLocation, fileName) => {
+      let errors = new Set();
+      errorLocation.forEach((errorCodes, index) => {
+        errorCodes.forEach(errorCode => {
+          errorDefinitions.get(errorCode)?.get('affected_fields').forEach((field: string) => {
+            errors.add(JSON.stringify([index, field]));
+          });
+        });
+      });
+      errorLocations.set(fileName, errors);
+    })
+
+    return errorLocations;
+  }, [dataErrors, errorDefinitions])
+
   const childIdsWithErrors = useMemo<Array<[number, number]>>(() => {
     let uniqueIds: Set<number> = new Set();
     let childIds: Array<[number, number]> = [];
@@ -47,10 +64,10 @@ export default function Validator({ parsedData, dataErrors, errorDefinitions }: 
         ? (
             <>
             <GovUK.H4>Header</GovUK.H4>
-            <DataTable rowData={filteredData.get('Header')} />
+            <DataTable rowData={filteredData.get('Header')} highlight={errorLocations.get('Header')} />
             <GovUK.SectionBreak mb={9}/>
             <GovUK.H4>Episodes</GovUK.H4>
-            <DataTable rowData={filteredData.get('Episodes')} />
+            <DataTable rowData={filteredData.get('Episodes')} highlight={errorLocations.get('Episodes')} />
             </>
           )
         : <GovUK.H4>Select a child...</GovUK.H4>
