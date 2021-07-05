@@ -24,20 +24,26 @@ export default function Validator({ parsedData, dataErrors }: ValidatorProps) {
     return filteredData;
   }, [parsedData, selectedChild])
 
-  const childIds = useMemo<Set<number>>(() => {
+  const childIdsWithErrors = useMemo<Array<[number, number]>>(() => {
     let uniqueIds: Set<number> = new Set();
+    let childIds: Array<[number, number]> = [];
     parsedData.get('Header')?.forEach(childData => {
-        uniqueIds.add(childData.get('CHILD'));
+      const childId = childData.get('CHILD');
+      if (!uniqueIds.has(childId)) {
+        uniqueIds.add(childId);
+        let num_errors = countErrorsForChild(parsedData, dataErrors, childId);
+        childIds.push([childId, num_errors]);
+      }
     });
-    return uniqueIds;
-  }, [parsedData])
+    return childIds;
+  }, [parsedData, dataErrors])
 
   return (
     <>
     <GovUK.GridRow>
       <GovUK.GridCol setWidth={'one-quarter'}>
         <GovUK.H4>Child ID</GovUK.H4>
-        <ChildSelector childIds={Array.from(childIds)} selected={selectedChild} setSelected={setSelectedChild} />
+        <ChildSelector childIds={childIdsWithErrors} selected={selectedChild} setSelected={setSelectedChild} />
       </GovUK.GridCol>
       <GovUK.GridCol setWidth='75%'>
         {selectedChild
@@ -68,4 +74,22 @@ function filterDataToChildId(parsedData: ParsedData, selectedChild: number | nul
       }
   });
   return rowData;
+}
+
+function countErrorsForChild(parsedData: ParsedData, dataErrors: ErrorIncidences, childId: number): number {
+  let count = 0;
+
+  parsedData.forEach((data, fileName) => {
+    data.forEach(row => {
+      if (row.get('CHILD') === childId) {
+        let index = row.get('Index');
+        let has_error = dataErrors.get(fileName)?.get(index)
+        if (has_error) {
+          count += has_error.length;
+        }
+      }
+    })
+  })
+
+  return count;
 }
