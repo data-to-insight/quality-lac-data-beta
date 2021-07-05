@@ -20,7 +20,7 @@ export default function DataTable({ rowData }: DataTableProps): ReactElement {
     for (const [i, row] of rowData.entries()) {
       let row_elements = [];
       for (const [j, r] of Array.from(row.values()).entries()) {
-        row_elements.push(<GovUK.Table.Cell key={j}>{r}</GovUK.Table.Cell>);
+        row_elements.push(<GovUK.Table.Cell key={j}>{r.toString()}</GovUK.Table.Cell>);
       }
       all_rows.push(<GovUK.Table.Row key={i}>{row_elements}</GovUK.Table.Row>);
     }
