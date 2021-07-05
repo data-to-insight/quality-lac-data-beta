@@ -1,7 +1,7 @@
 import * as GovUK from 'govuk-react';
 import ChildSelector from './ChildSelector';
 import DataTable from './DataTable';
-import React, { useState, useMemo, ReactElement } from 'react';
+import { useState, useMemo, ReactElement } from 'react';
 import { DataRow, ParsedData, ErrorIncidences, ErrorDefinitions } from './../types';
 
 interface ValidatorProps {
@@ -60,7 +60,7 @@ export default function Validator({ parsedData, dataErrors, errorDefinitions }: 
       return `Error ${error?.get('code')} - ${error?.get('description')}`
     });
 
-    return errors.map(e => <GovUK.ListItem>{errorToString(e)}</GovUK.ListItem>);
+    return errors.map(e => <GovUK.ListItem style={{fontSize: '1em'}}>{errorToString(e)}</GovUK.ListItem>);
   }, [parsedData, dataErrors, errorDefinitions, selectedChild])
 
   return (
@@ -83,7 +83,7 @@ export default function Validator({ parsedData, dataErrors, errorDefinitions }: 
               ? (
                 <>
                 <GovUK.H4>Errors</GovUK.H4>
-                <GovUK.UnorderedList>
+                <GovUK.UnorderedList style={{fontSize: '1em'}}>
                   {childErrors}
                 </GovUK.UnorderedList>
                 </>

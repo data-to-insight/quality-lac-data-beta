@@ -44,7 +44,19 @@ def fake_error(dfs):
     
     return error, {'Header': header.index[mask].values}
 
-tested_errors = [fake_error]
+def fake_error2(dfs):
+    error = Error(
+        code='2020',
+        description='A fake error that fires if the child has a postcode containing F.',
+        affected_fields=['HOME_POST'],
+    )
+
+    df = dfs['Episodes']
+    mask = df['HOME_POST'].str.contains('F')
+    
+    return error, {'Episodes': df.index[mask].values}
+
+tested_errors = [fake_error, fake_error2]
 validated = [f(dfs) for f in tested_errors]
 
 # Passed to JS
