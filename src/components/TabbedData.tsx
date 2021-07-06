@@ -10,20 +10,26 @@ interface TabbedDataProps {
 
 export default function TabbedData({ tableData, errorLocations }: TabbedDataProps): ReactElement {
   const [tabIndex, setTabIndex] = useState(0);
-  const shownTables = Array.from(tableData.keys()).filter(tableName => tableName !== 'Header')
+  const shownTables = Array.from(tableData.keys()).filter(tableName => tableName !== 'Header');
+
+  const tabTitles = Array.from(shownTables.entries()).map(([index, tableName]) => {
+    return <GovUK.Tabs.Tab onClick={() => setTabIndex(index)} selected={tabIndex === index}>{tableName}</GovUK.Tabs.Tab>;
+  });
+
+  const tabPanels = Array.from(shownTables.entries()).map(([index, tableName]) => {
+    return (
+      <GovUK.Tabs.Panel selected={tabIndex === index}>
+        <DataTable rowData={tableData.get(tableName)} highlight={errorLocations.get(tableName) as Set<string>} />
+      </GovUK.Tabs.Panel>
+    )
+  });
   return (
     <GovUK.Tabs>
       <GovUK.Tabs.Title>Upload</GovUK.Tabs.Title>
       <GovUK.Tabs.List>
-        <GovUK.Tabs.Tab onClick={() => setTabIndex(0)} selected={tabIndex === 0}>Episodes</GovUK.Tabs.Tab>
-        <GovUK.Tabs.Tab onClick={() => setTabIndex(1)} selected={tabIndex === 1}>Episodes 2</GovUK.Tabs.Tab>
+        {tabTitles}
       </GovUK.Tabs.List>
-      <GovUK.Tabs.Panel selected={tabIndex === 0}>
-        <DataTable rowData={tableData.get('Episodes')} highlight={errorLocations.get('Episodes') as Set<string>} />
-      </GovUK.Tabs.Panel>
-      <GovUK.Tabs.Panel selected={tabIndex === 1}>
-        <DataTable rowData={tableData.get('Episodes')} highlight={errorLocations.get('Episodes') as Set<string>} />
-      </GovUK.Tabs.Panel>
+      {tabPanels}
     </GovUK.Tabs>
   )
 }
