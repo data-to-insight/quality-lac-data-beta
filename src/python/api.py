@@ -22,10 +22,10 @@ def get_file_type(df):
     elif 'REVIEW' in df.columns:
         return 'Reviews'
 
-def read_csvs_from_text(raw_files: Dict[str, str]):
+def read_csvs_from_text(raw_files: List):
     files = {}
-    for file_name, file in raw_files.items():
-        csv_file = StringIO(file)
+    for file_data in raw_files:
+        csv_file = StringIO(file_data["fileText"])
         df = pd.read_csv(csv_file)
 
         files[get_file_type(df)] = df

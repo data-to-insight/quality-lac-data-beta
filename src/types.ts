@@ -1,5 +1,10 @@
-export type FilesCallback = (arg: UploadedFiles) => void;
-type UploadedFiles = {description: string, acceptedFiles: Array<File>};
+/** Callback type for the DropzoneUploader */
+export type FilesCallback = (arg: DropzoneUploadedFiles) => void;
+type DropzoneUploadedFiles = {description: string, acceptedFiles: Array<File>};
+
+/** Callback types for the Uploader */
+export type UploadedFilesCallback = (arg: UploadedFile) => void;
+export type UploadedFile = {name: string, fileText: string, description: string}
 
 /** Used for individual data rows */
 export type DataRow = Map<string, Object>;

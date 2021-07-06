@@ -4,11 +4,11 @@ import { Link } from 'react-router-dom';
 import { handleUploaded903Data } from './../api';
 import Validator from "./Validator";
 import Uploader from "./Uploader";
-import { ValidatedData } from '../types';
+import { UploadedFile, UploadedFilesCallback, ValidatedData } from '../types';
 
 export default function Dashboard() {
   const [pythonLoaded, setPythonLoaded] = useState(false);
-  const [fileContents, setFileContents] = useState(new Map());
+  const [fileContents, setFileContents] = useState<Array<UploadedFile>>([]);
   const [validatedData, setValidatedData] = useState<ValidatedData | null>();
 
   useEffect(() => {
@@ -22,13 +22,12 @@ export default function Dashboard() {
       }
 
       setPythonLoaded(true);
-
     })();
   }, [])
 
-  const addFileContent = useCallback((fileId, fileContent) => {
-    let newFileContents = new Map(fileContents.set(fileId, fileContent));
-    setFileContents(newFileContents);
+  const addFileContent = useCallback<UploadedFilesCallback>(uploadedFile => {
+    fileContents.push(uploadedFile); // We have to push to the old state in case the callback isn't updated in children
+    setFileContents([...fileContents]);
   }, [fileContents])
 
   const runValidation = useCallback(async () => {
@@ -40,7 +39,7 @@ export default function Dashboard() {
 
   const clearAndUpload = useCallback(() => {
     setValidatedData(null);
-    setFileContents(new Map());
+    setFileContents([]);
   }, [])
 
   return (

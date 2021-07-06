@@ -1,7 +1,7 @@
 import pythonAPI from './python/api.py'
-import { ValidatedData } from './types';
+import { ValidatedData, UploadedFile } from './types';
 
-export async function handleUploaded903Data(uploadedFiles: Map<string, string>): Promise<ValidatedData> {
+export async function handleUploaded903Data(uploadedFiles: Array<UploadedFile>): Promise<ValidatedData> {
     const pyodide = window.pyodide;
 
     console.log('Passing uploaded data to Pyodide...')

@@ -1,11 +1,11 @@
 import * as GovUK from 'govuk-react';
 import { useCallback, useState, ReactElement } from 'react';
 import DropzoneUploader from './DropzoneUploader';
-import { FilesCallback } from './../types';
+import { FilesCallback, UploadedFile, UploadedFilesCallback } from './../types';
 
 interface UploaderProps { 
-  currentFiles: Map<string, string>, 
-  addFileContent: (fileId: string, fileContent: string) => void 
+  currentFiles: Array<UploadedFile>,
+  addFileContent: UploadedFilesCallback,
 };
 
 export default function Uploader({ currentFiles, addFileContent }: UploaderProps): ReactElement {
@@ -20,7 +20,7 @@ export default function Uploader({ currentFiles, addFileContent }: UploaderProps
       reader.onload = () =>  {
         const fileText = reader.result as string;
         console.log(`Finished reading (${description}) file ${file.name}.`);
-        addFileContent(file.name, fileText);
+        addFileContent({name: file.name, description, fileText });
       }
 
       reader.readAsText(file);
@@ -66,9 +66,9 @@ export default function Uploader({ currentFiles, addFileContent }: UploaderProps
       </GovUK.Tabs.Panel>
     </GovUK.Tabs>
 
-    <GovUK.Details summary="Uploaded files" open={currentFiles.size > 0}>
+    <GovUK.Details summary="Uploaded files" open={currentFiles.length > 0}>
       <GovUK.UnorderedList>
-        {Array.from(currentFiles.keys()).map(key => <GovUK.ListItem key={key}>{key.toString()}</GovUK.ListItem>)}
+        {currentFiles.map(({ name }) => <GovUK.ListItem key={name}>{name}</GovUK.ListItem>)}
       </GovUK.UnorderedList>
     </GovUK.Details>
 
