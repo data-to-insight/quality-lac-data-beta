@@ -10,9 +10,9 @@ interface ErrorDisplayProps {
 
 // The margin-bottom has to equal height + margin-top + border
 const ErrorStyles = styled.div`
-div {
+.floatingContainer {
   position: relative;
-  padding: 0 10px;
+  padding: 10px 10px;
   top: 0;
   left: 100px;
   width: 300px;
@@ -21,9 +21,13 @@ div {
   margin-bottom: -307px;
   border: 1px solid black;
   background-color: #fff;
-  overflow-y: auto;
   font-size: 10px;
 }  
+
+input {
+  height: 13px;
+  width: 180px;
+}
 
 table {
   font-size: 10px;
@@ -60,7 +64,10 @@ export default function ErrorDisplay({ validatedData, isShown }: ErrorDisplayPro
 
   return (
     <ErrorStyles>
-      <div style={{display: isShown ? 'block' : 'none', float: 'left', position: 'relative', 'top': 0, 'left': '100px', width: '300px'}}>
+      <div className='floatingContainer' style={{display: isShown ? 'block' : 'none'}}>
+        <input placeholder="Enter a child ID to filter..." />
+        <button style={{float: 'right'}}>Clear filters</button>
+        <p>Click each row to filter for only that error type.</p>
         <GovUK.Table>
           <GovUK.Table.Row>
             <GovUK.Table.CellHeader>Code</GovUK.Table.CellHeader>
