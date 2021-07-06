@@ -60,13 +60,13 @@ export default function Validator({ validatedData }: ValidatorProps) {
       return `Error ${error?.get('code')} - ${error?.get('description')}`
     });
 
-    return errors.map(e => <GovUK.ListItem style={{fontSize: '1em'}}>{errorToString(e)}</GovUK.ListItem>);
+    return Array.from(errors.entries()).map(([i, e]) => <GovUK.ListItem key={i} style={{fontSize: '1em'}}>{errorToString(e)}</GovUK.ListItem>);
   }, [validatedData, selectedChild])
 
   return (
     <>
     <GovUK.GridRow mb={5}>
-      <GovUK.GridCol setWidth='17%'>
+      <GovUK.GridCol setWidth='200px'>
         <GovUK.H4>Child ID</GovUK.H4>
         <ChildSelector childIds={childIdsWithErrors} selected={selectedChild} setSelected={setSelectedChild} />
       </GovUK.GridCol>

@@ -14,12 +14,12 @@ export default function TabbedData({ tableData, errorLocations, excludedTable }:
   const shownTables = Array.from(tableData.keys()).filter(tableName => tableName !== excludedTable);
 
   const tabTitles = Array.from(shownTables.entries()).map(([index, tableName]) => {
-    return <GovUK.Tabs.Tab onClick={() => setTabIndex(index)} selected={tabIndex === index}>{tableName}</GovUK.Tabs.Tab>;
+    return <GovUK.Tabs.Tab key={index} onClick={() => setTabIndex(index)} selected={tabIndex === index}>{tableName}</GovUK.Tabs.Tab>;
   });
 
   const tabPanels = Array.from(shownTables.entries()).map(([index, tableName]) => {
     return (
-      <GovUK.Tabs.Panel selected={tabIndex === index}>
+      <GovUK.Tabs.Panel key={index} selected={tabIndex === index}>
         <DataTable rowData={tableData.get(tableName)} highlight={errorLocations.get(tableName) as Set<string>} />
       </GovUK.Tabs.Panel>
     )
