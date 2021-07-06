@@ -4,23 +4,21 @@ import { Link } from 'react-router-dom';
 import { handleUploaded903Data } from './../api';
 import Validator from "./Validator";
 import Uploader from "./Uploader";
+import { ValidatedData } from '../types';
 
 export default function Dashboard() {
-  const [ready, setReady] = useState(false);
   const [pythonLoaded, setPythonLoaded] = useState(false);
   const [fileContents, setFileContents] = useState(new Map());
-  const [parsedData, setParsedData] = useState(new Map());
-  const [dataErrors, setDataErrors] = useState(new Map());
-  const [errorDefinitions, setErrorDefinitions] = useState(new Map());
+  const [validatedData, setValidatedData] = useState<ValidatedData | null>();
 
   useEffect(() => {
     (async () => {
       if (!window.pyodide.runPython) {
         await window.loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.17.0/full/" });
-        await window.pyodide.loadPackage('pandas')
+        await window.pyodide.loadPackage('pandas');
         console.log('Loaded pyodide.');
       } else {
-        console.log('Pyodide already loaded.')
+        console.log('Pyodide already loaded.');
       }
 
       setPythonLoaded(true);
@@ -34,25 +32,19 @@ export default function Dashboard() {
   }, [fileContents])
 
   const runValidation = useCallback(async () => {
-    let { data, errors, errorDefinitions } = await handleUploaded903Data(fileContents);
-    setParsedData(data);
-    setDataErrors(errors);
-    setErrorDefinitions(errorDefinitions);
-    setReady(true);
+    let newValidatedData = await handleUploaded903Data(fileContents);
+    setValidatedData(newValidatedData)
   }, [fileContents])
 
   const clearAndUpload = useCallback(() => {
-    setReady(false);
-    setParsedData(new Map());
-    setDataErrors(new Map());
-    setErrorDefinitions(new Map());
+    setValidatedData(null);
     setFileContents(new Map());
   }, [])
 
   return (
     <>
-    {ready
-      ? <Validator parsedData={parsedData} dataErrors={dataErrors} errorDefinitions={errorDefinitions} />
+    {validatedData
+      ? <Validator validatedData={validatedData} />
       : <Uploader currentFiles={fileContents} addFileContent={addFileContent} />
     }
     <GovUK.LoadingBox loading={(!pythonLoaded) as boolean}>

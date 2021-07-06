@@ -2,32 +2,31 @@ import * as GovUK from 'govuk-react';
 import ChildSelector from './ChildSelector';
 import DataTable from './DataTable';
 import { useState, useMemo, ReactElement } from 'react';
-import { DataRow, ParsedData, ErrorIncidences, ErrorDefinitions } from './../types';
+import { DataRow, ParsedData, ValidatedData } from './../types';
 
 interface ValidatorProps {
-  parsedData: Map<string, Array<DataRow>>,
-  dataErrors: ErrorIncidences,
-  errorDefinitions: ErrorDefinitions,
+  validatedData: ValidatedData
 }
 
-export default function Validator({ parsedData, dataErrors, errorDefinitions }: ValidatorProps) {
+export default function Validator({ validatedData }: ValidatorProps) {
   let [selectedChild, setSelectedChild] = useState<number | null>(null);
 
   const filteredData = useMemo(() => {
     let filteredData: ParsedData = new Map();
-    Array.from(parsedData.keys()).forEach(key => {
-      filteredData.set(key, filterDataToChildId(parsedData, selectedChild, key))
+    validatedData.data.forEach((_, key) => {
+      filteredData.set(key, filterDataToChildId(validatedData.data, selectedChild, key))
     })
     return filteredData;
-  }, [parsedData, selectedChild])
+  }, [validatedData, selectedChild])
 
   const errorLocations = useMemo(() => {
     const errorLocations = new Map();
-    dataErrors.forEach((errorLocation, fileName) => {
+    validatedData.errors.forEach((errorLocation, fileName) => {
       let errors = new Set();
       errorLocation.forEach((errorCodes, index) => {
         errorCodes.forEach(errorCode => {
-          errorDefinitions.get(errorCode)?.get('affected_fields').forEach((field: string) => {
+          let affectedFields = validatedData.errorDefinitions.get(errorCode)?.get('affected_fields') as Array<String>
+          affectedFields.forEach(field => {
             errors.add(JSON.stringify([index, field]));
           });
         });
@@ -36,32 +35,32 @@ export default function Validator({ parsedData, dataErrors, errorDefinitions }: 
     })
 
     return errorLocations;
-  }, [dataErrors, errorDefinitions])
+  }, [validatedData])
 
   const childIdsWithErrors = useMemo<Array<[number, number]>>(() => {
     let uniqueIds: Set<number> = new Set();
     let childIds: Array<[number, number]> = [];
-    parsedData.get('Header')?.forEach(childData => {
-      const childId = childData.get('CHILD');
+    validatedData.data.get('Header')?.forEach(childData => {
+      const childId = childData.get('CHILD') as number;
       if (!uniqueIds.has(childId)) {
         uniqueIds.add(childId);
-        let num_errors = getErrorsForChild(parsedData, dataErrors, childId).length;
+        let num_errors = getErrorsForChild(validatedData, childId).length;
         childIds.push([childId, num_errors]);
       }
     });
     return childIds;
-  }, [parsedData, dataErrors])
+  }, [validatedData])
 
 
   const childErrors = useMemo<Array<ReactElement>>(() => {
-    let errors = getErrorsForChild(parsedData, dataErrors, selectedChild);
+    let errors = getErrorsForChild(validatedData, selectedChild);
     const errorToString = ((errorCode: string) => {
-      let error = errorDefinitions.get(errorCode);
+      let error = validatedData.errorDefinitions.get(errorCode);
       return `Error ${error?.get('code')} - ${error?.get('description')}`
     });
 
     return errors.map(e => <GovUK.ListItem style={{fontSize: '1em'}}>{errorToString(e)}</GovUK.ListItem>);
-  }, [parsedData, dataErrors, errorDefinitions, selectedChild])
+  }, [validatedData, selectedChild])
 
   return (
     <>
@@ -112,7 +111,7 @@ function filterDataToChildId(parsedData: ParsedData, selectedChild: number | nul
   return rowData;
 }
 
-function getErrorsForChild(parsedData: ParsedData, dataErrors: ErrorIncidences, childId: number | null): Array<string> {
+function getErrorsForChild({data: parsedData, errors: dataErrors}: ValidatedData, childId: number | null): Array<string> {
   if (!childId) { return []; }
 
   let allErrors: Array<string> = [];
@@ -120,7 +119,7 @@ function getErrorsForChild(parsedData: ParsedData, dataErrors: ErrorIncidences, 
   parsedData.forEach((data, fileName) => {
     data.forEach(row => {
       if (row.get('CHILD') === childId) {
-        let index = row.get('Index');
+        let index = row.get('Index') as number;
         let errors = dataErrors.get(fileName)?.get(index);
         if (errors) {errors.forEach(e => allErrors.push(e))}
       }
