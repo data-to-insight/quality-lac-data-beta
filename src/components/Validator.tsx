@@ -1,8 +1,9 @@
 import * as GovUK from 'govuk-react';
 import ChildSelector from './ChildSelector';
-import DataTable from './DataTable';
 import { useState, useMemo, ReactElement } from 'react';
-import { DataRow, ParsedData, ValidatedData } from './../types';
+import DataTable from './DataTable';
+import TabbedData from './TabbedData';
+import { DataRow, ParsedData, ValidatedData, ErrorLocations } from './../types';
 
 interface ValidatorProps {
   validatedData: ValidatedData
@@ -19,7 +20,7 @@ export default function Validator({ validatedData }: ValidatorProps) {
     return filteredData;
   }, [validatedData, selectedChild])
 
-  const errorLocations = useMemo(() => {
+  const errorLocations = useMemo<ErrorLocations>(() => {
     const errorLocations = new Map();
     validatedData.errors.forEach((errorLocation, fileName) => {
       let errors = new Set();
@@ -74,10 +75,9 @@ export default function Validator({ validatedData }: ValidatorProps) {
         ? (
             <>
             <GovUK.H4>Header</GovUK.H4>
-            <DataTable rowData={filteredData.get('Header')} highlight={errorLocations.get('Header')} />
+            <DataTable rowData={filteredData.get('Header')} highlight={errorLocations.get('Header') as Set<string>} />
             <GovUK.SectionBreak mb={9}/>
-            <GovUK.H4>Episodes</GovUK.H4>
-            <DataTable rowData={filteredData.get('Episodes')} highlight={errorLocations.get('Episodes')} />
+            <TabbedData tableData={filteredData} errorLocations={errorLocations} />
             {childErrors.length > 0
               ? (
                 <>
