@@ -8,7 +8,7 @@ function App() {
   return (
     <Router>
       <GovUK.GlobalStyle />
-      <GovUK.Page.WidthContainer style={{'height': '100vh'}}>
+      <GovUK.Page.WidthContainer style={{'height': '100vh', 'width': '80%', 'max-width': 'none'}}>
         <GovUK.PhaseBanner level="beta">This is a new service - your feedback can help us improve it.</GovUK.PhaseBanner>
         <GovUK.Page.Main>
           <GovUK.H2>SSDA903 Data Validation Service</GovUK.H2>

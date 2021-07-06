@@ -66,16 +66,18 @@ export default function Validator({ validatedData }: ValidatorProps) {
   return (
     <>
     <GovUK.GridRow mb={5}>
-      <GovUK.GridCol setWidth={'one-quarter'}>
+      <GovUK.GridCol setWidth='17%'>
         <GovUK.H4>Child ID</GovUK.H4>
         <ChildSelector childIds={childIdsWithErrors} selected={selectedChild} setSelected={setSelectedChild} />
       </GovUK.GridCol>
-      <GovUK.GridCol setWidth='75%'>
+      <GovUK.GridCol>
         {selectedChild
         ? (
             <>
-            <GovUK.H4>Header</GovUK.H4>
-            <DataTable rowData={filteredData.get('Header')} highlight={errorLocations.get('Header') as Set<string>} />
+            <div style={{width: '50%'}}>
+              <GovUK.H4>Header</GovUK.H4>
+              <DataTable rowData={filteredData.get('Header')} highlight={errorLocations.get('Header') as Set<string>} />
+            </div>
             <GovUK.SectionBreak mb={9}/>
             <TabbedData tableData={filteredData} errorLocations={errorLocations} />
             {childErrors.length > 0
