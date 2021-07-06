@@ -48,7 +48,7 @@ export default function Dashboard() {
       ? <Validator validatedData={validatedData} />
       : <Uploader currentFiles={fileContents} addFileContent={addFileContent} />
     }
-    <GovUK.LoadingBox loading={(!pythonLoaded) as boolean}>
+    <LoadingBox loading={(!pythonLoaded) as boolean}>
       <GovUK.GridRow>
         <GovUK.GridCol>
           <GovUK.GridRow>
@@ -69,7 +69,19 @@ export default function Dashboard() {
           <GovUK.BackLink as={Link} to="/">Go back</GovUK.BackLink>
         </GovUK.GridCol>
       </GovUK.GridRow>
-    </GovUK.LoadingBox>
+    </LoadingBox>
     </>
   )
+}
+
+function LoadingBox({children, loading}: any) {
+  if (loading) {
+    return (
+      <GovUK.LoadingBox loading>
+        {children}
+      </GovUK.LoadingBox>
+    )
+  } else {
+    return children
+  }
 }
