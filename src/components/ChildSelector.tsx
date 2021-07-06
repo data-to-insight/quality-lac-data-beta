@@ -7,7 +7,6 @@ interface ChildSelectorProps {
 }
 
 export default function ChildSelector({ childIds, selected, setSelected }: ChildSelectorProps) {
-
   let rows = [];
   for (const [i, [childId, numErrors]] of childIds.entries()) {
     let selectionTarget: number | null = childId;
