@@ -3,6 +3,7 @@ import ChildSelector from './ChildSelector';
 import { useState, useMemo, ReactElement } from 'react';
 import DataTable from './DataTable';
 import TabbedData from './TabbedData';
+import ErrorDisplay from './ErrorDisplay';
 import { DataRow, ParsedData, ValidatedData, ErrorLocations } from './../types';
 
 interface ValidatorProps {
@@ -11,6 +12,7 @@ interface ValidatorProps {
 
 export default function Validator({ validatedData }: ValidatorProps) {
   let [selectedChild, setSelectedChild] = useState<number | null>(null);
+  let [errorDisplayShown, setErrorDisplayShown] = useState(false);
 
   const filteredData = useMemo(() => {
     let filteredData: ParsedData = new Map();
@@ -67,7 +69,11 @@ export default function Validator({ validatedData }: ValidatorProps) {
     <>
     <GovUK.GridRow mb={5}>
       <GovUK.GridCol setWidth='200px'>
-        <GovUK.H4>Child ID</GovUK.H4>
+        <div>
+          <GovUK.H4 mb={8} style={{'display': 'inline', 'marginRight': '10px'}}>Child ID</GovUK.H4>
+          <button onClick={() => {setErrorDisplayShown(!errorDisplayShown)}} style={{'display': 'inline'}}>Filter</button>
+        </div>
+        <ErrorDisplay validatedData={validatedData} isShown={errorDisplayShown} />
         <ChildSelector childIds={childIdsWithErrors} selected={selectedChild} setSelected={setSelectedChild} />
       </GovUK.GridCol>
       <GovUK.GridCol>
