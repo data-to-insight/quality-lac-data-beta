@@ -6,11 +6,12 @@ import { ParsedData, ErrorLocations } from './../types';
 interface TabbedDataProps {
   tableData: ParsedData,
   errorLocations: ErrorLocations,
+  excludedTable: string | null,
 }
 
-export default function TabbedData({ tableData, errorLocations }: TabbedDataProps): ReactElement {
+export default function TabbedData({ tableData, errorLocations, excludedTable }: TabbedDataProps): ReactElement {
   const [tabIndex, setTabIndex] = useState(0);
-  const shownTables = Array.from(tableData.keys()).filter(tableName => tableName !== 'Header');
+  const shownTables = Array.from(tableData.keys()).filter(tableName => tableName !== excludedTable);
 
   const tabTitles = Array.from(shownTables.entries()).map(([index, tableName]) => {
     return <GovUK.Tabs.Tab onClick={() => setTabIndex(index)} selected={tabIndex === index}>{tableName}</GovUK.Tabs.Tab>;

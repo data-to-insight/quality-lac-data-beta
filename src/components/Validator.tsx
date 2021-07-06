@@ -79,7 +79,7 @@ export default function Validator({ validatedData }: ValidatorProps) {
               <DataTable rowData={filteredData.get('Header')} highlight={errorLocations.get('Header') as Set<string>} />
             </div>
             <GovUK.SectionBreak mb={9}/>
-            <TabbedData tableData={filteredData} errorLocations={errorLocations} />
+            <TabbedData tableData={filteredData} errorLocations={errorLocations} excludedTable='Header' />
             {childErrors.length > 0
               ? (
                 <>
