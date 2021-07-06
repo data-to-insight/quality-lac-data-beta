@@ -32,8 +32,10 @@ export default function Dashboard() {
   }, [fileContents])
 
   const runValidation = useCallback(async () => {
+    setPythonLoaded(false);
     let newValidatedData = await handleUploaded903Data(fileContents);
     setValidatedData(newValidatedData)
+    setPythonLoaded(true);
   }, [fileContents])
 
   const clearAndUpload = useCallback(() => {
