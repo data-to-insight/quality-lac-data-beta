@@ -29,7 +29,7 @@ export default function ChildSelector({ childIds, selected, setSelected }: Child
   }
 
   return (
-    <div style={{'overflowY': 'scroll', 'height': '60vh', width: '160px'}}>
+    <div style={{'overflowY': 'scroll', 'maxHeight': '100vh'}}>
       <GovUK.Table style={{fontSize: '1em'}}>
         {rows}
       </GovUK.Table>

@@ -17,6 +17,10 @@ def get_file_type(df):
         return 'Header'
     elif 'DECOM' in df.columns:
         return 'Episodes'
+    elif 'DUC' in df.columns:
+        return 'UASC'
+    elif 'REVIEW' in df.columns:
+        return 'Reviews'
 
 def read_csvs_from_text(raw_files: Dict[str, str]):
     files = {}

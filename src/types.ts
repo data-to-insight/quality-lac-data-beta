@@ -8,7 +8,7 @@ export type DataRow = Map<string, Object>;
 export type ParsedData = Map<string, Array<DataRow>>;
 
 export type ErrorCode = string;
-export type ErrorDefinition = Map<String, unknown>
+export type ErrorDefinition = Map<string, unknown>
 export type ErrorDefinitions = Map<ErrorCode, ErrorDefinition>;
 
 /** Error incidences are described by table name -> row index -> list of error codes */
@@ -20,6 +20,13 @@ export type ValidatedData = {
     errors: ErrorIncidences,
     errorDefinitions: ErrorDefinitions,
 }
+
+/** 
+ * Type used for error locations for each file 
+ * Has to map to string to be hashable in the Set type
+ * 
+ * e.g. Header -> {"[0, CHILD]", "[3, DEC"} */
+export type ErrorLocations = Map<string, Set<string>>
 
 declare global {
     interface Window {

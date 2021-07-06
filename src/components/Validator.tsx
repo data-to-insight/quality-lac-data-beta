@@ -1,8 +1,9 @@
 import * as GovUK from 'govuk-react';
 import ChildSelector from './ChildSelector';
-import DataTable from './DataTable';
 import { useState, useMemo, ReactElement } from 'react';
-import { DataRow, ParsedData, ValidatedData } from './../types';
+import DataTable from './DataTable';
+import TabbedData from './TabbedData';
+import { DataRow, ParsedData, ValidatedData, ErrorLocations } from './../types';
 
 interface ValidatorProps {
   validatedData: ValidatedData
@@ -19,7 +20,7 @@ export default function Validator({ validatedData }: ValidatorProps) {
     return filteredData;
   }, [validatedData, selectedChild])
 
-  const errorLocations = useMemo(() => {
+  const errorLocations = useMemo<ErrorLocations>(() => {
     const errorLocations = new Map();
     validatedData.errors.forEach((errorLocation, fileName) => {
       let errors = new Set();
@@ -59,25 +60,26 @@ export default function Validator({ validatedData }: ValidatorProps) {
       return `Error ${error?.get('code')} - ${error?.get('description')}`
     });
 
-    return errors.map(e => <GovUK.ListItem style={{fontSize: '1em'}}>{errorToString(e)}</GovUK.ListItem>);
+    return Array.from(errors.entries()).map(([i, e]) => <GovUK.ListItem key={i} style={{fontSize: '1em'}}>{errorToString(e)}</GovUK.ListItem>);
   }, [validatedData, selectedChild])
 
   return (
     <>
     <GovUK.GridRow mb={5}>
-      <GovUK.GridCol setWidth={'one-quarter'}>
+      <GovUK.GridCol setWidth='200px'>
         <GovUK.H4>Child ID</GovUK.H4>
         <ChildSelector childIds={childIdsWithErrors} selected={selectedChild} setSelected={setSelectedChild} />
       </GovUK.GridCol>
-      <GovUK.GridCol setWidth='75%'>
+      <GovUK.GridCol>
         {selectedChild
         ? (
             <>
-            <GovUK.H4>Header</GovUK.H4>
-            <DataTable rowData={filteredData.get('Header')} highlight={errorLocations.get('Header')} />
+            <div style={{width: '50%'}}>
+              <GovUK.H4>Header</GovUK.H4>
+              <DataTable rowData={filteredData.get('Header')} highlight={errorLocations.get('Header') as Set<string>} />
+            </div>
             <GovUK.SectionBreak mb={9}/>
-            <GovUK.H4>Episodes</GovUK.H4>
-            <DataTable rowData={filteredData.get('Episodes')} highlight={errorLocations.get('Episodes')} />
+            <TabbedData tableData={filteredData} errorLocations={errorLocations} excludedTable='Header' />
             {childErrors.length > 0
               ? (
                 <>

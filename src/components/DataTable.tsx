@@ -10,7 +10,7 @@ interface DataTableProps {
 
 const TableStyles = styled.div`
 table {
-  font-size: 1em;
+  font-size: 14px;
 }
 
 td {
