@@ -19,7 +19,7 @@ export default function TabbedData({ tableData, errorLocations, excludedTable }:
 
   const tabPanels = Array.from(shownTables.entries()).map(([index, tableName]) => {
     return (
-      <GovUK.Tabs.Panel key={index} selected={tabIndex === index}>
+      <GovUK.Tabs.Panel key={index} selected={tabIndex === index} style={{overflowX: 'auto'}}>
         <DataTable rowData={tableData.get(tableName)} highlight={errorLocations.get(tableName) as Set<string>} />
       </GovUK.Tabs.Panel>
     )

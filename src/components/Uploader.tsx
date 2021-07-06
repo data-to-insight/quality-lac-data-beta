@@ -44,11 +44,11 @@ export default function Uploader({ currentFiles, addFileContent }: UploaderProps
         <GovUK.GridRow>
           <GovUK.GridCol setWidth="one-half">
             <GovUK.H6>Previous year</GovUK.H6>
-            <DropzoneUploader description='prevYearCSV' onFiles={onFilesUploaded} accept='.csv'/>
+            <DropzoneUploader description='Prev year (CSV)' onFiles={onFilesUploaded} accept='.csv'/>
           </GovUK.GridCol>
           <GovUK.GridCol>
             <GovUK.H6>This year</GovUK.H6>
-            <DropzoneUploader description='thisYearCSV' onFiles={onFilesUploaded} accept='.csv'/>
+            <DropzoneUploader description='This year (CSV)' onFiles={onFilesUploaded} accept='.csv'/>
           </GovUK.GridCol>
         </GovUK.GridRow>
       </GovUK.Tabs.Panel>
@@ -56,20 +56,29 @@ export default function Uploader({ currentFiles, addFileContent }: UploaderProps
         <GovUK.GridRow>
           <GovUK.GridCol setWidth="one-half">
             <GovUK.H6>Previous year</GovUK.H6>
-            <DropzoneUploader description='prevYearXML' onFiles={onFilesUploaded} accept='.xml'/>
+            <DropzoneUploader description='Prev year (XML)' onFiles={onFilesUploaded} accept='.xml'/>
           </GovUK.GridCol>
           <GovUK.GridCol>
             <GovUK.H6>This year</GovUK.H6>
-            <DropzoneUploader description='thisYearXML' onFiles={onFilesUploaded} accept='.xml'/>
+            <DropzoneUploader description='This year (XML)' onFiles={onFilesUploaded} accept='.xml'/>
           </GovUK.GridCol>
         </GovUK.GridRow>
       </GovUK.Tabs.Panel>
     </GovUK.Tabs>
 
     <GovUK.Details summary="Uploaded files" open={currentFiles.length > 0}>
-      <GovUK.UnorderedList>
-        {currentFiles.map(({ name }) => <GovUK.ListItem key={name}>{name}</GovUK.ListItem>)}
-      </GovUK.UnorderedList>
+      {[...new Set(currentFiles.map(({description}) => description))].map(description => {
+        let matchingFiles = currentFiles.filter(({description: fileDescription}) => fileDescription === description)
+
+        return (
+          <>
+          <GovUK.Paragraph>{description}</GovUK.Paragraph>
+          <GovUK.UnorderedList>
+            {matchingFiles.map(({ name }) => <GovUK.ListItem key={name}>{name}</GovUK.ListItem>)}
+          </GovUK.UnorderedList>
+          </>
+        )
+      })}
     </GovUK.Details>
 
     </>
