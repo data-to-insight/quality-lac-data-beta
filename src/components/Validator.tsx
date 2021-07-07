@@ -130,7 +130,7 @@ export default function Validator({ validatedData }: ValidatorProps) {
             }
             </>
           )
-        : <GovUK.H4>Select a child...</GovUK.H4>
+        : <GovUK.Caption>Select a child...</GovUK.Caption>
         }
       </GovUK.GridCol>
     </GovUK.GridRow>
