@@ -1,4 +1,5 @@
 import * as GovUK from 'govuk-react';
+import { DebounceInput } from 'react-debounce-input';
 import { useMemo, ReactElement } from 'react';
 import { ValidatedData } from './../types';
 import styled from 'styled-components';
@@ -8,7 +9,7 @@ interface ErrorDisplayProps {
   isShown: boolean,
 }
 
-// The margin-bottom has to equal height + margin-top + border
+// The margin-bottom has to equal height + margin-top + border (top/bottom) + padding (top/bottom)
 const ErrorStyles = styled.div`
 .floatingContainer {
   position: relative;
@@ -18,7 +19,7 @@ const ErrorStyles = styled.div`
   width: 300px;
   height: 300px;
   margin-top: 5px;
-  margin-bottom: -307px;
+  margin-bottom: -327px;
   border: 1px solid black;
   background-color: #fff;
   font-size: 10px;
@@ -62,10 +63,11 @@ export default function ErrorDisplay({ validatedData, isShown }: ErrorDisplayPro
     return errorRows
   }, [validatedData])
 
+  // TODO: Debounced input
   return (
     <ErrorStyles>
       <div className='floatingContainer' style={{display: isShown ? 'block' : 'none'}}>
-        <input placeholder="Enter a child ID to filter..." />
+        <DebounceInput minLength={2} debounceTimeout={300} onChange={event => console.log(event)} placeholder="Enter a child ID to filter..." />
         <button style={{float: 'right'}}>Clear filters</button>
         <p>Click each row to filter for only that error type.</p>
         <GovUK.Table>
