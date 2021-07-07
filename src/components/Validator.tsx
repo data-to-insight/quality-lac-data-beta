@@ -16,6 +16,9 @@ export default function Validator({ validatedData }: ValidatorProps) {
   let [selectedChild, setSelectedChild] = useState<string | null>(null);
   let [errorDisplayShown, setErrorDisplayShown] = useState(false);
 
+  /**
+   * Filters the data that is shown to the selected child
+   */
   const filteredData = useMemo(() => {
     let filteredData: ParsedData = new Map();
     validatedData.data.forEach((_, key) => {
@@ -24,6 +27,10 @@ export default function Validator({ validatedData }: ValidatorProps) {
     return filteredData;
   }, [validatedData, selectedChild])
 
+  /**
+   * Computes a set of error locations used for highlighting. These are coordinates (index, columnName).
+   * The co-ordinates are then stringify-ed to allow hash comparison in a Set.
+   */
   const errorLocations = useMemo<ErrorLocations>(() => {
     const errorLocations = new Map();
     validatedData.errors.forEach((errorLocation, fileName) => {
@@ -42,6 +49,10 @@ export default function Validator({ validatedData }: ValidatorProps) {
     return errorLocations;
   }, [validatedData])
 
+  /**
+   * Computes the list of errors for each child.
+   * TODO: Current implementation is O(N * M) for N data, M child. Think can be O(N)
+   */
   const childIdsWithErrors = useMemo<Array<[string, Array<string>]>>(() => {
     let uniqueIds: Set<string> = new Set();
     let childIds: Array<[string, Array<string>]> = [];
@@ -55,7 +66,12 @@ export default function Validator({ validatedData }: ValidatorProps) {
     });
     return childIds;
   }, [validatedData])
-
+  
+  /**
+   * The child ID errors then get filtered to include only filtered Child IDs, or filtered errors.
+   * If a filter is not set it is assumed we should see everything.
+   * We then compute counts to pass to ChildSelector
+   */
   const filteredIdsWithErrorCounts = useMemo<Array<[string, number]>>(() => {
     let filteredIds: Array<[string, number]> = [];
     for (let [childId, errors] of childIdsWithErrors) {
@@ -64,7 +80,7 @@ export default function Validator({ validatedData }: ValidatorProps) {
       let errorMatches = errorFilter ? numErrors > 0 : true;
 
       if (childMatches && errorMatches) {
-        filteredIds.push([childId, numErrors])
+        filteredIds.push([childId, numErrors]);
       }
     }
     return filteredIds;
