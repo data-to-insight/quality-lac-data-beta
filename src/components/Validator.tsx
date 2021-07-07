@@ -102,7 +102,7 @@ export default function Validator({ validatedData }: ValidatorProps) {
       <GovUK.GridCol setWidth='200px'>
         <div>
           <GovUK.H4 mb={8} style={{'display': 'inline', 'marginRight': '10px'}}>Child ID</GovUK.H4>
-          <button onClick={() => {setErrorDisplayShown(!errorDisplayShown)}} style={{'display': 'inline'}}>Filter</button>
+          <button onClick={() => {setErrorDisplayShown(!errorDisplayShown)}} style={{display: 'inline', backgroundColor: (childFilter || errorFilter) ? '#a7c2d1' : undefined}}>Filter</button>
         </div>
         <ErrorDisplay validatedData={validatedData} isShown={errorDisplayShown} setChildFilter={setChildFilter} setErrorFilter={setErrorFilter} />
         <ChildSelector childIds={filteredIdsWithErrorCounts} selected={selectedChild} setSelected={setSelectedChild} />
