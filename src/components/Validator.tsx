@@ -51,20 +51,10 @@ export default function Validator({ validatedData }: ValidatorProps) {
 
   /**
    * Computes the list of errors for each child.
-   * TODO: Current implementation is O(N * M) for N data, M child. Think can be O(N)
-   */
+  */
   const childIdsWithErrors = useMemo<Array<[string, Array<string>]>>(() => {
-    let uniqueIds: Set<string> = new Set();
-    let childIds: Array<[string, Array<string>]> = [];
-    validatedData.data.get('Header')?.forEach(childData => {
-      const childId = childData.get('CHILD') as string;
-      if (!uniqueIds.has(childId)) {
-        uniqueIds.add(childId);
-        let errors = getErrorsForChild(validatedData, childId);
-        childIds.push([childId, errors]);
-      }
-    });
-    return childIds;
+    let errorsByChildId = getErrorsByChildId(validatedData);
+    return Array.from(errorsByChildId.entries());
   }, [validatedData])
   
   /**
@@ -162,6 +152,22 @@ function getErrorsForChild({data: parsedData, errors: dataErrors}: ValidatedData
         let errors = dataErrors.get(fileName)?.get(index);
         if (errors) {errors.forEach(e => allErrors.push(e))}
       }
+    })
+  })
+
+  return allErrors;
+}
+
+function getErrorsByChildId({data: parsedData, errors: dataErrors}: ValidatedData): Map<string, Array<string>> {
+  let allErrors: Map<string, Array<string>> = new Map();
+
+  parsedData.forEach((data, fileName) => {
+    data.forEach(row => {
+      let childId = row.get('CHILD') as string;
+      if (!allErrors.has(childId)) {allErrors.set(childId, []);}
+      let index = row.get('Index') as number;
+      let errors = dataErrors.get(fileName)?.get(index);
+      if (errors) {errors.forEach(e => allErrors.get(childId)?.push(e))}
     })
   })
 
