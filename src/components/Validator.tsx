@@ -11,7 +11,9 @@ interface ValidatorProps {
 }
 
 export default function Validator({ validatedData }: ValidatorProps) {
-  let [selectedChild, setSelectedChild] = useState<number | null>(null);
+  let [childFilter, setChildFilter] = useState<string | null>(null);
+  let [errorFilter, setErrorFilter] = useState<string | null>(null);
+  let [selectedChild, setSelectedChild] = useState<string | null>(null);
   let [errorDisplayShown, setErrorDisplayShown] = useState(false);
 
   const filteredData = useMemo(() => {
@@ -40,11 +42,11 @@ export default function Validator({ validatedData }: ValidatorProps) {
     return errorLocations;
   }, [validatedData])
 
-  const childIdsWithErrors = useMemo<Array<[number, number]>>(() => {
-    let uniqueIds: Set<number> = new Set();
-    let childIds: Array<[number, number]> = [];
+  const childIdsWithErrors = useMemo<Array<[string, number]>>(() => {
+    let uniqueIds: Set<string> = new Set();
+    let childIds: Array<[string, number]> = [];
     validatedData.data.get('Header')?.forEach(childData => {
-      const childId = childData.get('CHILD') as number;
+      const childId = childData.get('CHILD') as string;
       if (!uniqueIds.has(childId)) {
         uniqueIds.add(childId);
         let num_errors = getErrorsForChild(validatedData, childId).length;
@@ -53,6 +55,10 @@ export default function Validator({ validatedData }: ValidatorProps) {
     });
     return childIds;
   }, [validatedData])
+
+  const filteredIdsWithErrors = useMemo(() => {
+    return childIdsWithErrors.filter(([childId, _]) => childFilter ? childId.includes(childFilter) : true);
+  }, [childIdsWithErrors, childFilter]);
 
 
   const childErrors = useMemo<Array<ReactElement>>(() => {
@@ -73,8 +79,8 @@ export default function Validator({ validatedData }: ValidatorProps) {
           <GovUK.H4 mb={8} style={{'display': 'inline', 'marginRight': '10px'}}>Child ID</GovUK.H4>
           <button onClick={() => {setErrorDisplayShown(!errorDisplayShown)}} style={{'display': 'inline'}}>Filter</button>
         </div>
-        <ErrorDisplay validatedData={validatedData} isShown={errorDisplayShown} />
-        <ChildSelector childIds={childIdsWithErrors} selected={selectedChild} setSelected={setSelectedChild} />
+        <ErrorDisplay validatedData={validatedData} isShown={errorDisplayShown} setChildFilter={setChildFilter} setErrorFilter={setErrorFilter} />
+        <ChildSelector childIds={filteredIdsWithErrors} selected={selectedChild} setSelected={setSelectedChild} />
       </GovUK.GridCol>
       <GovUK.GridCol>
         {selectedChild
@@ -107,7 +113,7 @@ export default function Validator({ validatedData }: ValidatorProps) {
   )
 }
 
-function filterDataToChildId(parsedData: ParsedData, selectedChild: number | null, wantedTable: string) {
+function filterDataToChildId(parsedData: ParsedData, selectedChild: string | null, wantedTable: string) {
   let rowData: Array<DataRow> = [];
 
   parsedData.get(wantedTable)?.forEach(childData => {
@@ -119,7 +125,7 @@ function filterDataToChildId(parsedData: ParsedData, selectedChild: number | nul
   return rowData;
 }
 
-function getErrorsForChild({data: parsedData, errors: dataErrors}: ValidatedData, childId: number | null): Array<string> {
+function getErrorsForChild({data: parsedData, errors: dataErrors}: ValidatedData, childId: string | null): Array<string> {
   if (!childId) { return []; }
 
   let allErrors: Array<string> = [];

@@ -1,15 +1,15 @@
 import * as GovUK from 'govuk-react';
 
 interface ChildSelectorProps {
-    childIds: Array<[number, number]>,
-    selected: number | null,
-    setSelected: (arg: number | null) => void,
+    childIds: Array<[string, number]>,
+    selected: string | null,
+    setSelected: (arg: string | null) => void,
 }
 
 export default function ChildSelector({ childIds, selected, setSelected }: ChildSelectorProps) {
   let rows = [];
   for (const [i, [childId, numErrors]] of childIds.entries()) {
-    let selectionTarget: number | null = childId;
+    let selectionTarget: string | null = childId;
     let cellStyle = null;
     
     if (childId === selected) {
