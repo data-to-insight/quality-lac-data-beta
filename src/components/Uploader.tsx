@@ -1,5 +1,6 @@
-import * as GovUK from 'govuk-react';
+import styled from 'styled-components';
 import { useCallback, useState, ReactElement } from 'react';
+import * as GovUK from 'govuk-react';
 import DropzoneUploader from './DropzoneUploader';
 import { FilesCallback, UploadedFile, UploadedFilesCallback } from './../types';
 
@@ -8,8 +9,21 @@ interface UploaderProps {
   addFileContent: UploadedFilesCallback,
 };
 
+const UploaderStyles = styled.div`
+.disabled {
+  opacity: 50%;
+  pointer-events: none;
+}
+
+.disabledMode {
+  opacity: 50%;
+  pointer-events: none;
+  text-decoration: line-through;
+}
+`
+
 export default function Uploader({ currentFiles, addFileContent }: UploaderProps): ReactElement {
-  const [tabIndex, setTabIndex] = useState<number>(0);
+  const [fileMode, setFileMode] = useState('csv');
 
   const onFilesUploaded = useCallback<FilesCallback>(({description, acceptedFiles}) => {
     acceptedFiles.forEach( file => {
@@ -28,59 +42,60 @@ export default function Uploader({ currentFiles, addFileContent }: UploaderProps
   }, [addFileContent])
 
   return (
-    <>
-    <GovUK.Paragraph>
-      This tool will not send data to any third party. It uses the browser as an application to locate files in your computer and run scripts
-      on them to identify errors. Once the browser is loaded, you can locate the files and run the validation offline.
-    </GovUK.Paragraph>
-    
-    <GovUK.Tabs>
-      <GovUK.Tabs.Title>Upload</GovUK.Tabs.Title>
-      <GovUK.Tabs.List>
-        <GovUK.Tabs.Tab onClick={() => setTabIndex(0)} selected={tabIndex === 0}>CSV Upload</GovUK.Tabs.Tab>
-        <GovUK.Tabs.Tab onClick={() => setTabIndex(1)} selected={tabIndex === 1}>XML Upload</GovUK.Tabs.Tab>
-      </GovUK.Tabs.List>
-      <GovUK.Tabs.Panel selected={tabIndex === 0}>
-        <GovUK.GridRow>
-          <GovUK.GridCol>
-            <GovUK.H6>This year</GovUK.H6>
-            <DropzoneUploader description='This year (CSV)' onFiles={onFilesUploaded} accept='.csv'/>
-          </GovUK.GridCol>
-          <GovUK.GridCol setWidth="one-half">
-            <GovUK.H6>Previous year</GovUK.H6>
-            <DropzoneUploader description='Prev year (CSV)' onFiles={onFilesUploaded} accept='.csv'/>
-          </GovUK.GridCol>
-        </GovUK.GridRow>
-      </GovUK.Tabs.Panel>
-      <GovUK.Tabs.Panel selected={tabIndex === 1}>
-        <GovUK.GridRow>
-          <GovUK.GridCol>
-            <GovUK.H6>This year</GovUK.H6>
-            <DropzoneUploader description='This year (XML)' onFiles={onFilesUploaded} accept='.xml'/>
-          </GovUK.GridCol>
-          <GovUK.GridCol setWidth="one-half">
-            <GovUK.H6>Previous year</GovUK.H6>
-            <DropzoneUploader description='Prev year (XML)' onFiles={onFilesUploaded} accept='.xml'/>
-          </GovUK.GridCol>
-        </GovUK.GridRow>
-      </GovUK.Tabs.Panel>
-    </GovUK.Tabs>
+    <UploaderStyles>
+      <GovUK.Paragraph>
+        This tool will not send data to any third party. It uses the browser as an application to locate files in your computer and run scripts
+        on them to identify errors. Once the browser is loaded, you can locate the files and run the validation offline.
+      </GovUK.Paragraph>
+      
+      <GovUK.Tabs>
+        <GovUK.Tabs.Title>Upload</GovUK.Tabs.Title>
+        <GovUK.Tabs.List>
+          <GovUK.Tabs.Tab onClick={() => setFileMode('csv')} selected={fileMode === 'csv'} 
+            className={fileMode !== 'csv' && currentFiles.length > 0 ? 'disabledMode' : null}>CSV Upload</GovUK.Tabs.Tab>
+          <GovUK.Tabs.Tab onClick={() => setFileMode('xml')} selected={fileMode === 'xml'}
+            className={fileMode !== 'xml' && currentFiles.length > 0 ? 'disabledMode' : null}>XML Upload</GovUK.Tabs.Tab>
+        </GovUK.Tabs.List>
+        <GovUK.Tabs.Panel selected={fileMode === 'csv'}>
+          <GovUK.GridRow>
+            <GovUK.GridCol>
+              <GovUK.H6>This year</GovUK.H6>
+              <DropzoneUploader description='This year (CSV)' onFiles={onFilesUploaded} accept='.csv'/>
+            </GovUK.GridCol>
+            <GovUK.GridCol setWidth="one-half" className={currentFiles.length > 0 ? null : 'disabled'}>
+              <GovUK.H6>Previous year</GovUK.H6>
+              <DropzoneUploader description='Prev year (CSV)' onFiles={onFilesUploaded} accept='.csv'/>
+            </GovUK.GridCol>
+          </GovUK.GridRow>
+        </GovUK.Tabs.Panel>
+        <GovUK.Tabs.Panel selected={fileMode === 'xml'}>
+          <GovUK.GridRow>
+            <GovUK.GridCol>
+              <GovUK.H6>This year</GovUK.H6>
+              <DropzoneUploader description='This year (XML)' onFiles={onFilesUploaded} accept='.xml'/>
+            </GovUK.GridCol>
+            <GovUK.GridCol setWidth="one-half" className={currentFiles.length > 0 ? null : 'disabled'}>
+              <GovUK.H6>Previous year</GovUK.H6>
+              <DropzoneUploader description='Prev year (XML)' onFiles={onFilesUploaded} accept='.xml'/>
+            </GovUK.GridCol>
+          </GovUK.GridRow>
+        </GovUK.Tabs.Panel>
+      </GovUK.Tabs>
 
-    <GovUK.Details summary="Uploaded files" open={currentFiles.length > 0}>
-      {[...new Set(currentFiles.map(({description}) => description))].map(description => {
-        let matchingFiles = currentFiles.filter(({description: fileDescription}) => fileDescription === description)
+      <GovUK.Details summary="Uploaded files" open={currentFiles.length > 0}>
+        {[...new Set(currentFiles.map(({description}) => description))].map(description => {
+          let matchingFiles = currentFiles.filter(({description: fileDescription}) => fileDescription === description)
 
-        return (
-          <>
-          <GovUK.Paragraph>{description}</GovUK.Paragraph>
-          <GovUK.UnorderedList>
-            {matchingFiles.map(({ name }) => <GovUK.ListItem key={name}>{name}</GovUK.ListItem>)}
-          </GovUK.UnorderedList>
-          </>
-        )
-      })}
-    </GovUK.Details>
-
-    </>
+          return (
+            <>
+            <GovUK.Paragraph>{description}</GovUK.Paragraph>
+            <GovUK.UnorderedList>
+              {matchingFiles.map(({ name }) => <GovUK.ListItem key={name}>{name}</GovUK.ListItem>)}
+            </GovUK.UnorderedList>
+            </>
+          )
+        })}
+      </GovUK.Details>
+    </UploaderStyles>
   )
 }
