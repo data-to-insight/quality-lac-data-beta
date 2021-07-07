@@ -42,24 +42,33 @@ export default function Validator({ validatedData }: ValidatorProps) {
     return errorLocations;
   }, [validatedData])
 
-  const childIdsWithErrors = useMemo<Array<[string, number]>>(() => {
+  const childIdsWithErrors = useMemo<Array<[string, Array<string>]>>(() => {
     let uniqueIds: Set<string> = new Set();
-    let childIds: Array<[string, number]> = [];
+    let childIds: Array<[string, Array<string>]> = [];
     validatedData.data.get('Header')?.forEach(childData => {
       const childId = childData.get('CHILD') as string;
       if (!uniqueIds.has(childId)) {
         uniqueIds.add(childId);
-        let num_errors = getErrorsForChild(validatedData, childId).length;
-        childIds.push([childId, num_errors]);
+        let errors = getErrorsForChild(validatedData, childId);
+        childIds.push([childId, errors]);
       }
     });
     return childIds;
   }, [validatedData])
 
-  const filteredIdsWithErrors = useMemo(() => {
-    return childIdsWithErrors.filter(([childId, _]) => childFilter ? childId.includes(childFilter) : true);
-  }, [childIdsWithErrors, childFilter]);
+  const filteredIdsWithErrorCounts = useMemo<Array<[string, number]>>(() => {
+    let filteredIds: Array<[string, number]> = [];
+    for (let [childId, errors] of childIdsWithErrors) {
+      let numErrors = errors.filter(e => errorFilter ? e === errorFilter : true).length;
+      let childMatches = childFilter ? childId.toString().includes(childFilter) : true;
+      let errorMatches = errorFilter ? numErrors > 0 : true;
 
+      if (childMatches && errorMatches) {
+        filteredIds.push([childId, numErrors])
+      }
+    }
+    return filteredIds;
+  }, [childIdsWithErrors, childFilter, errorFilter]);
 
   const childErrors = useMemo<Array<ReactElement>>(() => {
     let errors = getErrorsForChild(validatedData, selectedChild);
@@ -80,7 +89,7 @@ export default function Validator({ validatedData }: ValidatorProps) {
           <button onClick={() => {setErrorDisplayShown(!errorDisplayShown)}} style={{'display': 'inline'}}>Filter</button>
         </div>
         <ErrorDisplay validatedData={validatedData} isShown={errorDisplayShown} setChildFilter={setChildFilter} setErrorFilter={setErrorFilter} />
-        <ChildSelector childIds={filteredIdsWithErrors} selected={selectedChild} setSelected={setSelectedChild} />
+        <ChildSelector childIds={filteredIdsWithErrorCounts} selected={selectedChild} setSelected={setSelectedChild} />
       </GovUK.GridCol>
       <GovUK.GridCol>
         {selectedChild
