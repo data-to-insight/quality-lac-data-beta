@@ -42,25 +42,25 @@ export default function Uploader({ currentFiles, addFileContent }: UploaderProps
       </GovUK.Tabs.List>
       <GovUK.Tabs.Panel selected={tabIndex === 0}>
         <GovUK.GridRow>
-          <GovUK.GridCol setWidth="one-half">
-            <GovUK.H6>Previous year</GovUK.H6>
-            <DropzoneUploader description='Prev year (CSV)' onFiles={onFilesUploaded} accept='.csv'/>
-          </GovUK.GridCol>
           <GovUK.GridCol>
             <GovUK.H6>This year</GovUK.H6>
             <DropzoneUploader description='This year (CSV)' onFiles={onFilesUploaded} accept='.csv'/>
+          </GovUK.GridCol>
+          <GovUK.GridCol setWidth="one-half">
+            <GovUK.H6>Previous year</GovUK.H6>
+            <DropzoneUploader description='Prev year (CSV)' onFiles={onFilesUploaded} accept='.csv'/>
           </GovUK.GridCol>
         </GovUK.GridRow>
       </GovUK.Tabs.Panel>
       <GovUK.Tabs.Panel selected={tabIndex === 1}>
         <GovUK.GridRow>
-          <GovUK.GridCol setWidth="one-half">
-            <GovUK.H6>Previous year</GovUK.H6>
-            <DropzoneUploader description='Prev year (XML)' onFiles={onFilesUploaded} accept='.xml'/>
-          </GovUK.GridCol>
           <GovUK.GridCol>
             <GovUK.H6>This year</GovUK.H6>
             <DropzoneUploader description='This year (XML)' onFiles={onFilesUploaded} accept='.xml'/>
+          </GovUK.GridCol>
+          <GovUK.GridCol setWidth="one-half">
+            <GovUK.H6>Previous year</GovUK.H6>
+            <DropzoneUploader description='Prev year (XML)' onFiles={onFilesUploaded} accept='.xml'/>
           </GovUK.GridCol>
         </GovUK.GridRow>
       </GovUK.Tabs.Panel>
