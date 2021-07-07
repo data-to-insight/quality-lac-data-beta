@@ -12,6 +12,7 @@ interface TabbedDataProps {
 export default function TabbedData({ tableData, errorLocations, excludedTable }: TabbedDataProps): ReactElement {
   const [tabIndex, setTabIndex] = useState(0);
   const shownTables = Array.from(tableData.keys()).filter(tableName => tableName !== excludedTable);
+  shownTables.sort();
 
   const tabTitles = Array.from(shownTables.entries()).map(([index, tableName]) => {
     return <GovUK.Tabs.Tab key={index} onClick={() => setTabIndex(index)} selected={tabIndex === index}>{tableName}</GovUK.Tabs.Tab>;

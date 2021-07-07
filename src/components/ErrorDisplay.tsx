@@ -56,12 +56,13 @@ export default function ErrorDisplay({ validatedData, isShown, setChildFilter, s
       })
     });
 
-    let errorRows: Array<ReactElement> = [];
-    errorCounts.forEach((count, errorCode) => {
+    let errorCountsArr = Array.from(errorCounts.entries());
+    errorCountsArr.sort(([, firstCount], [, secondCount]) => secondCount - firstCount);
+    return errorCountsArr.map(([errorCode, count]) => {
       let errorDetails = validatedData.errorDefinitions.get(errorCode);
       let isSelected = errorCode === selectedError
       
-      errorRows.push(
+      return (
         <GovUK.Table.Row key={errorCode} className={isSelected ? 'selectedError' : null} onClick={() => setSelectedError(isSelected ? null : errorCode)}>
           <GovUK.Table.Cell>{errorCode}</GovUK.Table.Cell>
           <GovUK.Table.Cell>{errorDetails?.get('description')}</GovUK.Table.Cell>
@@ -69,8 +70,6 @@ export default function ErrorDisplay({ validatedData, isShown, setChildFilter, s
         </GovUK.Table.Row>
       )
     })
-
-    return errorRows
   }, [validatedData, selectedError]);
 
   useEffect(() => {
