@@ -9,6 +9,7 @@ import { UploadedFile, UploadedFilesCallback, ValidatedData } from '../types';
 export default function Dashboard() {
   const [pythonLoaded, setPythonLoaded] = useState(false);
   const [fileContents, setFileContents] = useState<Array<UploadedFile>>([]);
+  const [uploadErrors, setUploadErrors] = useState<Array<any>>([]);
   const [validatedData, setValidatedData] = useState<ValidatedData | null>();
 
   useEffect(() => {
@@ -30,23 +31,31 @@ export default function Dashboard() {
     setFileContents([...fileContents]);
   }, [fileContents])
 
-  const runValidation = useCallback(async () => {
-    setPythonLoaded(false);
-    let newValidatedData = await handleUploaded903Data(fileContents);
-    setValidatedData(newValidatedData);
-    setPythonLoaded(true);
-  }, [fileContents])
-
   const clearAndUpload = useCallback(() => {
+    setUploadErrors([]);
     setValidatedData(null);
     setFileContents([]);
   }, [])
+
+  const runValidation = useCallback(async () => {
+    setUploadErrors([]);
+    setPythonLoaded(false);
+    let [newValidatedData, pythonErrors] = await handleUploaded903Data(fileContents);
+    if (pythonErrors.length === 0) {
+      setValidatedData(newValidatedData);
+    } else {
+      clearAndUpload();
+      setUploadErrors(pythonErrors)
+    }
+    setPythonLoaded(true);
+  }, [fileContents, clearAndUpload])
+
 
   return (
     <>
     {validatedData
       ? <Validator validatedData={validatedData} />
-      : <Uploader currentFiles={fileContents} addFileContent={addFileContent} />
+      : <Uploader currentFiles={fileContents} addFileContent={addFileContent} uploadErrors={uploadErrors} />
     }
     <LoadingBox loading={(!pythonLoaded) as boolean}>
       <GovUK.GridRow>

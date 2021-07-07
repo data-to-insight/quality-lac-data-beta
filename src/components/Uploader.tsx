@@ -7,6 +7,7 @@ import { FilesCallback, UploadedFile, UploadedFilesCallback } from './../types';
 interface UploaderProps { 
   currentFiles: Array<UploadedFile>,
   addFileContent: UploadedFilesCallback,
+  uploadErrors: Array<any>,
 };
 
 const UploaderStyles = styled.div`
@@ -22,7 +23,7 @@ const UploaderStyles = styled.div`
 }
 `
 
-export default function Uploader({ currentFiles, addFileContent }: UploaderProps): ReactElement {
+export default function Uploader({ currentFiles, addFileContent, uploadErrors }: UploaderProps): ReactElement {
   const [fileMode, setFileMode] = useState('csv');
 
   const onFilesUploaded = useCallback<FilesCallback>(({description, acceptedFiles}) => {
@@ -88,14 +89,22 @@ export default function Uploader({ currentFiles, addFileContent }: UploaderProps
 
           return (
             <>
-            <GovUK.Paragraph>{description}</GovUK.Paragraph>
-            <GovUK.UnorderedList>
+            <GovUK.Paragraph key={description + 'p'}>{description}</GovUK.Paragraph>
+            <GovUK.UnorderedList key={description + 'ul'}>
               {matchingFiles.map(({ name }) => <GovUK.ListItem key={name}>{name}</GovUK.ListItem>)}
             </GovUK.UnorderedList>
             </>
           )
         })}
       </GovUK.Details>
+      {uploadErrors.length > 0
+        ? (
+          <GovUK.Details summary="Errors" open>
+            {Array.from(uploadErrors.entries()).map(([i, error]) => <GovUK.ErrorText key={i}>{error.toString()}</GovUK.ErrorText>)}
+          </GovUK.Details>
+        )
+        : null
+      }
     </UploaderStyles>
   )
 }
