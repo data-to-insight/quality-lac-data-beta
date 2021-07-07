@@ -84,23 +84,23 @@ export default function Uploader({ currentFiles, addFileContent, uploadErrors }:
       </GovUK.Tabs>
 
       <GovUK.Details summary="Uploaded files" open={currentFiles.length > 0}>
-        {[...new Set(currentFiles.map(({description}) => description))].map(description => {
+        {Array.from((new Set(currentFiles.map(({description}) => description))).entries(), ([index, description]) => {
           let matchingFiles = currentFiles.filter(({description: fileDescription}) => fileDescription === description)
 
           return (
-            <>
-            <GovUK.Paragraph key={description + 'p'}>{description}</GovUK.Paragraph>
-            <GovUK.UnorderedList key={description + 'ul'}>
-              {matchingFiles.map(({ name }) => <GovUK.ListItem key={name}>{name}</GovUK.ListItem>)}
+            <div key={index}>
+            <GovUK.Paragraph>{description}</GovUK.Paragraph>
+            <GovUK.UnorderedList>
+              {Array.from(matchingFiles.entries(), ([i, { name }]) => <GovUK.ListItem key={i}>{name}</GovUK.ListItem>)}
             </GovUK.UnorderedList>
-            </>
+            </div>
           )
         })}
       </GovUK.Details>
       {uploadErrors.length > 0
         ? (
           <GovUK.Details summary="Errors" open>
-            {Array.from(uploadErrors.entries()).map(([i, error]) => <GovUK.ErrorText key={i}>{error.toString()}</GovUK.ErrorText>)}
+            {Array.from(uploadErrors.entries(), ([i, error]) => <GovUK.ErrorText key={i}>{error.toString()}</GovUK.ErrorText>)}
           </GovUK.Details>
         )
         : null
