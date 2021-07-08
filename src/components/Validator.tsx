@@ -5,6 +5,7 @@ import DataTable from './DataTable';
 import TabbedData from './TabbedData';
 import ErrorDisplay from './ErrorDisplay';
 import { DataRow, ParsedData, ValidatedData, ErrorLocations } from './../types';
+import { useEffect } from 'react';
 
 interface ValidatorProps {
   validatedData: ValidatedData
@@ -15,6 +16,9 @@ export default function Validator({ validatedData }: ValidatorProps) {
   let [errorFilter, setErrorFilter] = useState<string | null>(null);
   let [selectedChild, setSelectedChild] = useState<string | null>(null);
   let [errorDisplayShown, setErrorDisplayShown] = useState(false);
+
+  // Scroll to top when this renders
+  useEffect(() => window.scrollTo(0, 0), [])
 
   /**
    * Filters the data that is shown to the selected child
