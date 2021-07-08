@@ -9,8 +9,8 @@ export async function handleUploaded903Data(uploadedFiles: Array<UploadedFile>):
 
   let uploadErrors = [];
   try {
-      pyodide.runPython(`
-      js_files, errors, error_definitions = run_validation_for_javascript(uploaded_files.to_py())
+      await pyodide.runPythonAsync(`
+        js_files, errors, error_definitions = run_validation_for_javascript(uploaded_files.to_py())
       `);
   } catch (error) {
       console.log('Caught Error!')
