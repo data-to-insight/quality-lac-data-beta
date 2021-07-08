@@ -14,7 +14,9 @@ export async function handleUploaded903Data(uploadedFiles: Array<UploadedFile>):
     } catch (error) {
         console.log('Caught Error!')
         console.log(error.toString());
-        uploadErrors.push('Python error in validating upload!\n' + error.toString());
+        // We need to take the second to last line to get the exception text.
+        const errorLines = error.toString().split('\n')
+        uploadErrors.push(errorLines[errorLines.length - 2]);
     }
 
     const data = pyodide.globals.get("js_files")?.toJs();
