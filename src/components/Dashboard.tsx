@@ -1,7 +1,7 @@
 import * as GovUK from 'govuk-react';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { handleUploaded903Data } from './../api';
+import { handleUploaded903Data, loadPyodide } from './../api';
 import Validator from "./Validator";
 import Uploader from "./Uploader";
 import { UploadedFile, UploadedFilesCallback, ValidatedData } from '../types';
@@ -14,14 +14,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     (async () => {
-      if (!window.pyodide.runPython) {
-        await window.loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.17.0/full/" });
-        await window.pyodide.loadPackage('pandas');
-        console.log('Loaded pyodide.');
-      } else {
-        console.log('Pyodide already loaded.');
-      }
-
+      await loadPyodide();
       setPythonLoaded(true);
     })();
   }, [])

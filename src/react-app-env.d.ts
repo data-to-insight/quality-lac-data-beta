@@ -1,4 +1,5 @@
 /// <reference types="react-scripts" />
 declare module 'govuk-react';
 
-declare module '*.py'
+declare module '*.py';
+declare module '*.whl';
