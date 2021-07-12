@@ -1,11 +1,11 @@
 import * as GovUK from 'govuk-react';
 import ChildSelector from './ChildSelector';
-import { useState, useMemo, ReactElement } from 'react';
+import { useState, useMemo, useEffect, ReactElement } from 'react';
+import { headerTableName, childColumnName } from './../config';
 import DataTable from './DataTable';
 import TabbedData from './TabbedData';
 import ErrorDisplay from './ErrorDisplay';
 import { DataRow, ParsedData, ValidatedData, ErrorLocations } from './../types';
-import { useEffect } from 'react';
 
 interface ValidatorProps {
   validatedData: ValidatedData
@@ -107,10 +107,10 @@ export default function Validator({ validatedData }: ValidatorProps) {
             <>
             <div style={{width: '50%'}}>
               <GovUK.H4>Header</GovUK.H4>
-              <DataTable rowData={filteredData.get('Header')} highlight={errorLocations.get('Header') as Set<string>} />
+              <DataTable rowData={filteredData.get(headerTableName)} highlight={errorLocations.get(headerTableName) as Set<string>} />
             </div>
             <GovUK.SectionBreak mb={9}/>
-            <TabbedData tableData={filteredData} errorLocations={errorLocations} excludedTable='Header' />
+            <TabbedData tableData={filteredData} errorLocations={errorLocations} excludedTable={headerTableName} />
             {childErrors.length > 0
               ? (
                 <>
@@ -136,7 +136,7 @@ function filterDataToChildId(parsedData: ParsedData, selectedChild: string | nul
   let rowData: Array<DataRow> = [];
 
   parsedData.get(wantedTable)?.forEach(childData => {
-      let child_id = childData.get('CHILD');
+      let child_id = childData.get(childColumnName);
       if (child_id === selectedChild) {
         rowData.push(childData);
       }
@@ -151,7 +151,7 @@ function getErrorsForChild({data: parsedData, errors: dataErrors}: ValidatedData
 
   parsedData.forEach((data, fileName) => {
     data.forEach(row => {
-      if (row.get('CHILD') === childId) {
+      if (row.get(childColumnName) === childId) {
         let index = row.get('Index') as number;
         let errors = dataErrors.get(fileName)?.get(index);
         if (errors) {errors.forEach(e => allErrors.push(e))}
@@ -167,7 +167,7 @@ function getErrorsByChildId({data: parsedData, errors: dataErrors}: ValidatedDat
 
   parsedData.forEach((data, fileName) => {
     data.forEach(row => {
-      let childId = row.get('CHILD') as string;
+      let childId = row.get(childColumnName) as string;
       if (!allErrors.has(childId)) {allErrors.set(childId, []);}
       let index = row.get('Index') as number;
       let errors = dataErrors.get(fileName)?.get(index);
