@@ -1,4 +1,4 @@
-import libraryWheel from './python/903_Validator-0.1-py3-none-any.whl'
+import libraryWheel from './python/903_Validator-0.1.0-py3-none-any.whl'
 import { ValidatedData, UploadedFile } from './types';
 
 export async function handleUploaded903Data(uploadedFiles: Array<UploadedFile>): Promise<[ValidatedData, Array<any>]> {
