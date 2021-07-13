@@ -50,12 +50,12 @@ export default function Uploader({ currentFiles, addFileContent, uploadErrors }:
       </GovUK.Paragraph>
       
       <GovUK.Tabs>
-        <GovUK.Tabs.Title>Upload</GovUK.Tabs.Title>
+        <GovUK.Tabs.Title>Locate</GovUK.Tabs.Title>
         <GovUK.Tabs.List>
           <GovUK.Tabs.Tab onClick={() => setFileMode('csv')} selected={fileMode === 'csv'} 
-            className={fileMode !== 'csv' && currentFiles.length > 0 ? 'disabledMode' : null}>CSV Upload</GovUK.Tabs.Tab>
+            className={fileMode !== 'csv' && currentFiles.length > 0 ? 'disabledMode' : null}>CSV Files</GovUK.Tabs.Tab>
           <GovUK.Tabs.Tab onClick={() => setFileMode('xml')} selected={fileMode === 'xml'}
-            className={fileMode !== 'xml' && currentFiles.length > 0 ? 'disabledMode' : null}>XML Upload</GovUK.Tabs.Tab>
+            className={fileMode !== 'xml' && currentFiles.length > 0 ? 'disabledMode' : null}>XML Files</GovUK.Tabs.Tab>
         </GovUK.Tabs.List>
         <GovUK.Tabs.Panel selected={fileMode === 'csv'}>
           <GovUK.GridRow>
@@ -83,7 +83,7 @@ export default function Uploader({ currentFiles, addFileContent, uploadErrors }:
         </GovUK.Tabs.Panel>
       </GovUK.Tabs>
 
-      <GovUK.Details summary="Uploaded files" open={currentFiles.length > 0}>
+      <GovUK.Details summary="Located files" open={currentFiles.length > 0}>
         {Array.from((new Set(currentFiles.map(({description}) => description))).entries(), ([index, description]) => {
           let matchingFiles = currentFiles.filter(({description: fileDescription}) => fileDescription === description)
 
