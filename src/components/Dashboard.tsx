@@ -44,8 +44,10 @@ export default function Dashboard() {
     setPythonLoaded(true);
   }, [fileContents, clearAndUpload])
 
-  const downloadChildErrorCSV = useCallback(() => {
-    let rows = [["ChildID", "ErrorCode", "ErrorDescription", "ErrorFields"]];
+  const downloadCSVs = useCallback(() => {
+    let childSummaryRows = [["ChildID", "ErrorCode", "ErrorDescription", "ErrorFields"]];
+    let errorCountRows = [['ErrorCode', 'ErrorDescription', 'NumErrors']];
+    let errorCounts = new Map();
     validatedData?.data.forEach((table, tableName) => {
       let errors = validatedData.errors.get(tableName);
       table.forEach(dataRow => {
@@ -55,13 +57,20 @@ export default function Dashboard() {
         errorList?.forEach(errorCode => {
           let errorDefn = validatedData.errorDefinitions.get(errorCode) as Map<string, any>;
           let errorFields = errorDefn?.get('affected_fields')?.toString();
-          rows.push([child, errorCode, errorDefn?.get("description") as string, errorFields as string]);
+          childSummaryRows.push([child, errorCode, errorDefn?.get("description") as string, errorFields as string]);
+
+          errorCounts.set(errorCode, errorCounts.has(errorCode) ? errorCounts.get(errorCode) + 1 : 1)
         })
       })
     })
 
-    let csvContent = new Blob([rows.map(e => e.join(",")).join('\n')], {type: 'text/csv'});
-    saveAs(csvContent, 'ChildErrorSummary.csv')
+    errorCounts.forEach((numErrors, errorCode) => errorCountRows.push([errorCode, validatedData?.errorDefinitions.get(errorCode)?.get('description'), numErrors]))
+
+    let childErrorContent = new Blob([childSummaryRows.map(r => r.join(",")).join('\n')], {type: 'text/csv'});
+    saveAs(childErrorContent, 'ChildErrorSummary.csv')
+
+    let errorSummaryContent = new Blob([errorCountRows.map(r => r.join(",")).join('\n')], {type: 'text/csv'});
+    saveAs(errorSummaryContent, 'ErrorCounts.csv')
 
   }, [validatedData])
 
@@ -84,7 +93,7 @@ export default function Dashboard() {
       </div>
       <div style={{marginRight: '10%', display: 'inline'}}>
         {validatedData
-          ? <GovUK.Button onClick={downloadChildErrorCSV}>Download CSVs</GovUK.Button>
+          ? <GovUK.Button onClick={downloadCSVs}>Download CSVs</GovUK.Button>
           : <GovUK.Button buttonColour='gray' disabled>Download CSVs</GovUK.Button>
         }
       </div>
