@@ -1,10 +1,11 @@
 import * as GovUK from 'govuk-react';
 import { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { saveAs } from 'file-saver';
 import { handleUploaded903Data, loadPyodide } from './../api';
 import Validator from "./Validator";
 import Uploader from "./Uploader";
 import { UploadedFile, UploadedFilesCallback, ValidatedData } from '../types';
+import { childColumnName } from '../config';
 
 export default function Dashboard() {
   const [pythonLoaded, setPythonLoaded] = useState(false);
@@ -43,6 +44,27 @@ export default function Dashboard() {
     setPythonLoaded(true);
   }, [fileContents, clearAndUpload])
 
+  const downloadChildErrorCSV = useCallback(() => {
+    let rows = [["ChildID", "ErrorCode", "ErrorDescription", "ErrorFields"]];
+    validatedData?.data.forEach((table, tableName) => {
+      let errors = validatedData.errors.get(tableName);
+      table.forEach(dataRow => {
+        let index = dataRow.get('Index') as number;
+        let child = dataRow.get(childColumnName) as string;
+        let errorList = errors?.get(index);
+        errorList?.forEach(errorCode => {
+          let errorDefn = validatedData.errorDefinitions.get(errorCode) as Map<string, any>;
+          let errorFields = errorDefn?.get('affected_fields')?.toString();
+          rows.push([child, errorCode, errorDefn?.get("description") as string, errorFields as string]);
+        })
+      })
+    })
+
+    let csvContent = new Blob([rows.map(e => e.join(",")).join('\n')], {type: 'text/csv'});
+    saveAs(csvContent, 'ChildErrorSummary.csv')
+
+  }, [validatedData])
+
 
   return (
     <>
@@ -51,26 +73,21 @@ export default function Dashboard() {
       : <Uploader currentFiles={fileContents} addFileContent={addFileContent} uploadErrors={uploadErrors} />
     }
     <LoadingBox loading={(!pythonLoaded) as boolean}>
-      <GovUK.GridRow>
-        <GovUK.GridCol>
-          <GovUK.GridRow>
-            <GovUK.GridCol>
-              {pythonLoaded
-                ? <GovUK.Button onClick={runValidation}>Validate</GovUK.Button>
-                : <GovUK.Button buttonColour='gray'>Python loading...</GovUK.Button>
-              }
-            </GovUK.GridCol>
-            <GovUK.GridCol>
-              <GovUK.Button onClick={clearAndUpload}>
-                Clear Data and Reupload
-              </GovUK.Button>
-            </GovUK.GridCol>
-          </GovUK.GridRow>
-        </GovUK.GridCol>
-        <GovUK.GridCol>
-          <GovUK.BackLink as={Link} to="/">Go back</GovUK.BackLink>
-        </GovUK.GridCol>
-      </GovUK.GridRow>
+      <div style={{marginRight: '10%', display: 'inline'}}>
+        {pythonLoaded
+          ? <GovUK.Button onClick={runValidation}>Validate</GovUK.Button>
+          : <GovUK.Button buttonColour='gray'>Python loading...</GovUK.Button>
+        }
+      </div>
+      <div style={{marginRight: '10%', display: 'inline'}}>
+        <GovUK.Button onClick={clearAndUpload}>Clear Data and Reupload</GovUK.Button>
+      </div>
+      <div style={{marginRight: '10%', display: 'inline'}}>
+        {validatedData
+          ? <GovUK.Button onClick={downloadChildErrorCSV}>Download CSVs</GovUK.Button>
+          : <GovUK.Button buttonColour='gray' disabled>Download CSVs</GovUK.Button>
+        }
+      </div>
     </LoadingBox>
     </>
   )
