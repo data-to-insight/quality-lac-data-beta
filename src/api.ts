@@ -39,7 +39,8 @@ export async function loadPyodide() {
     await window.pyodide.runPythonAsync(`
       import micropip
       await micropip.install(validator_library_path)
-      from validator903 import run_validation_for_javascript
+      from validator903 import *
+      error_definitions = get_error_definitions_list()
     `)
     console.log('Loaded custom libary.')
   } else {
