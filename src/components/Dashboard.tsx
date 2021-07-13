@@ -64,13 +64,15 @@ export default function Dashboard() {
       })
     })
 
-    errorCounts.forEach((numErrors, errorCode) => errorCountRows.push([errorCode, validatedData?.errorDefinitions.get(errorCode)?.get('description'), numErrors]))
+    errorCounts.forEach((numErrors, errorCode) => {
+      errorCountRows.push([errorCode, validatedData?.errorDefinitions.get(errorCode)?.get('description'), numErrors]);
+    })
 
     let childErrorContent = new Blob([childSummaryRows.map(r => r.join(",")).join('\n')], {type: 'text/csv'});
-    saveAs(childErrorContent, 'ChildErrorSummary.csv')
+    saveAs(childErrorContent, 'ChildErrorSummary.csv');
 
     let errorSummaryContent = new Blob([errorCountRows.map(r => r.join(",")).join('\n')], {type: 'text/csv'});
-    saveAs(errorSummaryContent, 'ErrorCounts.csv')
+    saveAs(errorSummaryContent, 'ErrorCounts.csv');
 
   }, [validatedData])
 
