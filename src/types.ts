@@ -15,6 +15,12 @@ export type ParsedData = Map<string, Array<DataRow>>;
 export type ErrorCode = string;
 export type ErrorDefinition = Map<string, unknown>
 export type ErrorDefinitions = Map<ErrorCode, ErrorDefinition>;
+export type ErrorSelected = {
+    code: string,
+    description: string,
+    affectedFields: Array<string>,
+    selected: boolean,
+}
 
 /** Error incidences are described by table name -> row index -> list of error codes */
 export type ErrorIncidences = Map<string, Map<number, Array<ErrorCode>>>;

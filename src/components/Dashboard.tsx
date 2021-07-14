@@ -1,10 +1,10 @@
 import * as GovUK from 'govuk-react';
 import { useCallback, useEffect, useState } from 'react';
 import { saveAs } from 'file-saver';
-import { handleUploaded903Data, loadPyodide } from './../api';
+import { handleUploaded903Data, loadPyodideAndErrorDefinitions } from './../api';
 import Validator from "./Validator";
 import Uploader from "./Uploader";
-import { UploadedFile, UploadedFilesCallback, ValidatedData } from '../types';
+import { ErrorSelected, UploadedFile, UploadedFilesCallback, ValidatedData } from '../types';
 import { childColumnName } from '../config';
 
 export default function Dashboard() {
@@ -12,10 +12,12 @@ export default function Dashboard() {
   const [fileContents, setFileContents] = useState<Array<UploadedFile>>([]);
   const [uploadErrors, setUploadErrors] = useState<Array<any>>([]);
   const [validatedData, setValidatedData] = useState<ValidatedData | null>();
+  const [selectedErrors, setSelectedErrors] = useState<Array<ErrorSelected>>([]);
 
   useEffect(() => {
     (async () => {
-      await loadPyodide();
+      let selectedErrors = await loadPyodideAndErrorDefinitions();
+      setSelectedErrors(selectedErrors);
       setPythonLoaded(true);
     })();
   }, [])
@@ -81,7 +83,7 @@ export default function Dashboard() {
     <>
     {validatedData
       ? <Validator validatedData={validatedData} />
-      : <Uploader currentFiles={fileContents} addFileContent={addFileContent} uploadErrors={uploadErrors} />
+      : <Uploader currentFiles={fileContents} addFileContent={addFileContent} uploadErrors={uploadErrors} selectedErrors={selectedErrors} setSelectedErrors={setSelectedErrors}/>
     }
     <LoadingBox loading={(!pythonLoaded) as boolean}>
       <div style={{marginRight: '10%', display: 'inline'}}>

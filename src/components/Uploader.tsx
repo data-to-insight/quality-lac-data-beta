@@ -2,12 +2,14 @@ import styled from 'styled-components';
 import { useCallback, useState, ReactElement } from 'react';
 import * as GovUK from 'govuk-react';
 import DropzoneUploader from './DropzoneUploader';
-import { FilesCallback, UploadedFile, UploadedFilesCallback } from './../types';
+import { ErrorSelected, FilesCallback, UploadedFile, UploadedFilesCallback } from './../types';
 
 interface UploaderProps { 
   currentFiles: Array<UploadedFile>,
   addFileContent: UploadedFilesCallback,
   uploadErrors: Array<any>,
+  selectedErrors: Array<ErrorSelected>,
+  setSelectedErrors: (arg1: Array<ErrorSelected>) => void;
 };
 
 const UploaderStyles = styled.div`
@@ -23,7 +25,7 @@ const UploaderStyles = styled.div`
 }
 `
 
-export default function Uploader({ currentFiles, addFileContent, uploadErrors }: UploaderProps): ReactElement {
+export default function Uploader({ currentFiles, addFileContent, uploadErrors, selectedErrors, setSelectedErrors }: UploaderProps): ReactElement {
   const [fileMode, setFileMode] = useState('csv');
 
   const onFilesUploaded = useCallback<FilesCallback>(({description, acceptedFiles}) => {
@@ -41,6 +43,19 @@ export default function Uploader({ currentFiles, addFileContent, uploadErrors }:
       reader.readAsText(file);
     })
   }, [addFileContent])
+
+  const toggleErrorSelection = useCallback(toggledError => {
+    let newSelectedErrors: Array<ErrorSelected> = [];
+    for (let error of selectedErrors) {
+      let errorCopy = { ...error }
+      if (errorCopy.code === toggledError.code) {
+        errorCopy.selected = !errorCopy.selected;
+      }
+      newSelectedErrors.push(errorCopy);
+    }
+
+    setSelectedErrors(newSelectedErrors);
+  }, [selectedErrors, setSelectedErrors])
 
   return (
     <UploaderStyles>
@@ -82,6 +97,9 @@ export default function Uploader({ currentFiles, addFileContent, uploadErrors }:
           </GovUK.GridRow>
         </GovUK.Tabs.Panel>
       </GovUK.Tabs>
+      <GovUK.Details summary="Validation Rules">
+        {selectedErrors.map(error => <GovUK.Checkbox key={error.code} checked={error.selected} onChange={() => toggleErrorSelection(error)}>{error.code} - {error.description}</GovUK.Checkbox>)}
+      </GovUK.Details> 
 
       {uploadErrors.length > 0
         ? (
