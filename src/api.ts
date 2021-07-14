@@ -1,5 +1,5 @@
 import libraryWheel from './python/903_Validator-0.1.0-py3-none-any.whl'
-import { ValidatedData, UploadedFile } from './types';
+import { ValidatedData, UploadedFile, ErrorSelected } from './types';
 
 export async function handleUploaded903Data(uploadedFiles: Array<UploadedFile>): Promise<[ValidatedData, Array<any>]> {
   const pyodide = window.pyodide;
@@ -29,21 +29,36 @@ export async function handleUploaded903Data(uploadedFiles: Array<UploadedFile>):
   return [{ data, errors, errorDefinitions }, uploadErrors]
 }
 
-export async function loadPyodide() {
+export async function loadPyodideAndErrorDefinitions(): Promise<Array<ErrorSelected>> {
   if (!window.pyodide.runPython) {
     await window.loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.17.0/full/" });
     await window.pyodide.loadPackage(['pandas']);
     console.log('Loaded pyodide, now loading custom library...');
 
-    window.pyodide.globals.set("validator_library_path", libraryWheel)
+    window.pyodide.globals.set("validator_library_path", libraryWheel);
     await window.pyodide.runPythonAsync(`
       import micropip
       await micropip.install(validator_library_path)
       from validator903 import *
       error_definitions = get_error_definitions_list()
-    `)
-    console.log('Loaded custom libary.')
+    `);
+    console.log('Loaded custom libary.');
   } else {
     console.log('Pyodide already loaded.');
   }
+
+  let errorDefinitionsPy: any = window.pyodide.globals.get("error_definitions");
+
+  let errorDefinitions: Array<ErrorSelected> = [];
+  for (let error of errorDefinitionsPy) {
+    errorDefinitions.push({
+      code: error.code,
+      description: error.description,
+      affectedFields: error.affected_fields,
+      selected: true,
+    })
+    error.destroy();
+  }
+  errorDefinitionsPy.destroy();
+  return errorDefinitions
 }
