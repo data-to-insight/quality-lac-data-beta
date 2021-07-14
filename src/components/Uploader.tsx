@@ -61,11 +61,11 @@ export default function Uploader({ currentFiles, addFileContent, uploadErrors }:
           <GovUK.GridRow>
             <GovUK.GridCol>
               <GovUK.H6>This year</GovUK.H6>
-              <DropzoneUploader description='This year (CSV)' onFiles={onFilesUploaded} accept='.csv'/>
+              <DropzoneUploader description='This year (CSV)' onFiles={onFilesUploaded} accept='.csv' displayedFiles={currentFiles.filter(f => f.description === 'This year (CSV)')} />
             </GovUK.GridCol>
             <GovUK.GridCol setWidth="one-half" className={currentFiles.length > 0 ? null : 'disabled'}>
               <GovUK.H6>Previous year</GovUK.H6>
-              <DropzoneUploader description='Prev year (CSV)' onFiles={onFilesUploaded} accept='.csv'/>
+              <DropzoneUploader description='Prev year (CSV)' onFiles={onFilesUploaded} accept='.csv' displayedFiles={currentFiles.filter(f => f.description === 'Prev year (CSV)')} />
             </GovUK.GridCol>
           </GovUK.GridRow>
         </GovUK.Tabs.Panel>
@@ -73,30 +73,16 @@ export default function Uploader({ currentFiles, addFileContent, uploadErrors }:
           <GovUK.GridRow>
             <GovUK.GridCol>
               <GovUK.H6>This year</GovUK.H6>
-              <DropzoneUploader description='This year (XML)' onFiles={onFilesUploaded} accept='.xml'/>
+              <DropzoneUploader description='This year (XML)' onFiles={onFilesUploaded} accept='.xml' displayedFiles={currentFiles.filter(f => f.description === 'This year (XML)')} />
             </GovUK.GridCol>
             <GovUK.GridCol setWidth="one-half" className={currentFiles.length > 0 ? null : 'disabled'}>
               <GovUK.H6>Previous year</GovUK.H6>
-              <DropzoneUploader description='Prev year (XML)' onFiles={onFilesUploaded} accept='.xml'/>
+              <DropzoneUploader description='Prev year (XML)' onFiles={onFilesUploaded} accept='.xml' displayedFiles={currentFiles.filter(f => f.description === 'Prev year (XML)')} />
             </GovUK.GridCol>
           </GovUK.GridRow>
         </GovUK.Tabs.Panel>
       </GovUK.Tabs>
 
-      <GovUK.Details summary="Located files" open={currentFiles.length > 0}>
-        {Array.from((new Set(currentFiles.map(({description}) => description))).entries(), ([index, description]) => {
-          let matchingFiles = currentFiles.filter(({description: fileDescription}) => fileDescription === description)
-
-          return (
-            <div key={index}>
-            <GovUK.Paragraph>{description}</GovUK.Paragraph>
-            <GovUK.UnorderedList>
-              {Array.from(matchingFiles.entries(), ([i, { name }]) => <GovUK.ListItem key={i}>{name}</GovUK.ListItem>)}
-            </GovUK.UnorderedList>
-            </div>
-          )
-        })}
-      </GovUK.Details>
       {uploadErrors.length > 0
         ? (
           <GovUK.Details summary="Errors" open>
