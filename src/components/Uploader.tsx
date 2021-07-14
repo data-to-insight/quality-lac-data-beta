@@ -44,19 +44,6 @@ export default function Uploader({ currentFiles, addFileContent, uploadErrors, s
     })
   }, [addFileContent])
 
-  const toggleErrorSelection = useCallback(toggledError => {
-    let newSelectedErrors: Array<ErrorSelected> = [];
-    for (let error of selectedErrors) {
-      let errorCopy = { ...error }
-      if (errorCopy.code === toggledError.code) {
-        errorCopy.selected = !errorCopy.selected;
-      }
-      newSelectedErrors.push(errorCopy);
-    }
-
-    setSelectedErrors(newSelectedErrors);
-  }, [selectedErrors, setSelectedErrors])
-
   return (
     <UploaderStyles>
       <GovUK.Paragraph>
@@ -97,9 +84,6 @@ export default function Uploader({ currentFiles, addFileContent, uploadErrors, s
           </GovUK.GridRow>
         </GovUK.Tabs.Panel>
       </GovUK.Tabs>
-      <GovUK.Details summary="Validation Rules">
-        {selectedErrors.map(error => <GovUK.Checkbox key={error.code} checked={error.selected} onChange={() => toggleErrorSelection(error)}>{error.code} - {error.description}</GovUK.Checkbox>)}
-      </GovUK.Details> 
 
       {uploadErrors.length > 0
         ? (

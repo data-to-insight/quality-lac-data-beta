@@ -78,6 +78,18 @@ export default function Dashboard() {
 
   }, [validatedData])
 
+  const toggleErrorSelection = useCallback(toggledError => {
+    let newSelectedErrors: Array<ErrorSelected> = [];
+    for (let error of selectedErrors) {
+      let errorCopy = { ...error }
+      if (errorCopy.code === toggledError.code) {
+        errorCopy.selected = !errorCopy.selected;
+      }
+      newSelectedErrors.push(errorCopy);
+    }
+
+    setSelectedErrors(newSelectedErrors);
+  }, [selectedErrors, setSelectedErrors])
 
   return (
     <>
@@ -85,7 +97,12 @@ export default function Dashboard() {
       ? <Validator validatedData={validatedData} />
       : <Uploader currentFiles={fileContents} addFileContent={addFileContent} uploadErrors={uploadErrors} selectedErrors={selectedErrors} setSelectedErrors={setSelectedErrors}/>
     }
+
     <LoadingBox loading={(!pythonLoaded) as boolean}>
+      <GovUK.Details summary={`Validation Rules (${selectedErrors.filter(e => e.selected).length} selected, ${selectedErrors.filter(e => !e.selected).length} unselected)`}>
+        {selectedErrors.map(error => <GovUK.Checkbox key={error.code} checked={error.selected} onChange={() => toggleErrorSelection(error)}>{error.code} - {error.description}</GovUK.Checkbox>)}
+      </GovUK.Details> 
+
       <div style={{marginRight: '10%', display: 'inline'}}>
         {pythonLoaded
           ? <GovUK.Button onClick={runValidation}>Validate</GovUK.Button>
