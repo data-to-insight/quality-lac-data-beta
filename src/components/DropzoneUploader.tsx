@@ -53,7 +53,7 @@ export default function DropzoneUploader({onFiles, description, accept, displaye
       {displayedFiles.length > 0 && (
         <>
         <GovUK.Paragraph mb={1}>Located files (click to add more):</GovUK.Paragraph>
-        <GovUK.UnorderedList mb={1}>{displayedFiles.map(file => <GovUK.ListItem>{file.name}</GovUK.ListItem>)}</GovUK.UnorderedList>
+        <GovUK.UnorderedList mb={1}>{displayedFiles.map(file => <GovUK.ListItem key={file.name}>{file.name}</GovUK.ListItem>)}</GovUK.UnorderedList>
         </>
       )}
       {displayText()}
