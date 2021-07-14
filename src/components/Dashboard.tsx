@@ -36,7 +36,7 @@ export default function Dashboard() {
   const runValidation = useCallback(async () => {
     setUploadErrors([]);
     setPythonLoaded(false);
-    let [newValidatedData, pythonErrors] = await handleUploaded903Data(fileContents);
+    let [newValidatedData, pythonErrors] = await handleUploaded903Data(fileContents, selectedErrors);
     if (pythonErrors.length === 0) {
       setValidatedData(newValidatedData);
     } else {
@@ -44,7 +44,7 @@ export default function Dashboard() {
       setUploadErrors(pythonErrors)
     }
     setPythonLoaded(true);
-  }, [fileContents, clearAndUpload])
+  }, [fileContents, selectedErrors, clearAndUpload])
 
   const downloadCSVs = useCallback(() => {
     let childSummaryRows = [["ChildID", "ErrorCode", "ErrorDescription", "ErrorFields"]];

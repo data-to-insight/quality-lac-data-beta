@@ -1,16 +1,17 @@
 import libraryWheel from './python/903_Validator-0.1.0-py3-none-any.whl'
 import { ValidatedData, UploadedFile, ErrorSelected } from './types';
 
-export async function handleUploaded903Data(uploadedFiles: Array<UploadedFile>): Promise<[ValidatedData, Array<any>]> {
+export async function handleUploaded903Data(uploadedFiles: Array<UploadedFile>, selectedErrors: Array<ErrorSelected>): Promise<[ValidatedData, Array<any>]> {
   const pyodide = window.pyodide;
 
   console.log('Passing uploaded data to Pyodide...')
   pyodide.globals.set("uploaded_files", uploadedFiles)
+  pyodide.globals.set("error_codes", selectedErrors.filter(e => e.selected).map(({ code }) => code))
 
   let uploadErrors = [];
   try {
       await pyodide.runPythonAsync(`
-        js_files, errors, error_definitions = run_validation_for_javascript(uploaded_files.to_py())
+        js_files, errors, error_definitions = run_validation_for_javascript(uploaded_files.to_py(), error_codes=error_codes.to_py())
       `);
   } catch (error) {
       console.log('Caught Error!')
@@ -57,8 +58,6 @@ export async function loadPyodideAndErrorDefinitions(): Promise<Array<ErrorSelec
       affectedFields: error.affected_fields,
       selected: true,
     })
-    error.destroy();
   }
-  errorDefinitionsPy.destroy();
   return errorDefinitions
 }
