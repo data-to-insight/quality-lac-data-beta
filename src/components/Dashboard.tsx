@@ -106,10 +106,7 @@ export default function Dashboard() {
       </GovUK.Details> 
 
       <div style={{marginRight: '10%', display: 'inline'}}>
-        {pythonLoaded
-          ? <GovUK.Button onClick={runValidation}>Validate</GovUK.Button>
-          : <GovUK.Button buttonColour='gray'>Python loading...</GovUK.Button>
-        }
+        <GovUK.Button onClick={runValidation}>Validate</GovUK.Button>
       </div>
       <div style={{marginRight: '10%', display: 'inline'}}>
         <GovUK.Button onClick={clearAndUpload}>Clear Data and Reupload</GovUK.Button>
