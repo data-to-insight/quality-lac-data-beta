@@ -9,7 +9,7 @@ function App() {
     <Router>
       <GovUK.GlobalStyle />
       <GovUK.Page.WidthContainer style={{'height': '100vh', 'width': '75%', 'maxWidth': 'none'}}>
-        <GovUK.PhaseBanner level="beta">This is a new service - your feedback can help us improve it.</GovUK.PhaseBanner>
+        <GovUK.PhaseBanner level="beta">This is a new service - <GovUK.Link href="https://join.slack.com/t/datatoinsight/shared_invite/zt-nuw179pj-n5Glvc7S1bFbeE~l2vZf_w">your feedback can help us improve it.</GovUK.Link></GovUK.PhaseBanner>
         <GovUK.Page.Main>
           <GovUK.H2>SSDA903 Data Validation Service</GovUK.H2>
           <Switch>
