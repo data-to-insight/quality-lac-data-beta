@@ -2,7 +2,7 @@ import * as GovUK from 'govuk-react';
 import { Spinner } from '@govuk-react/icons';
 import { useCallback, useEffect, useState } from 'react';
 import { saveAs } from 'file-saver';
-import { handleUploaded903Data, loadPyodideAndErrorDefinitions } from './../api';
+import { handleUploaded903Data, loadErrorDefinitions, loadPyodide } from './../api';
 import Validator from "./Validator";
 import Uploader from "./Uploader";
 import { ErrorSelected, UploadedFile, UploadedFilesCallback, ValidatedData } from '../types';
@@ -17,7 +17,8 @@ export default function Dashboard() {
 
   useEffect(() => {
     (async () => {
-      let selectedErrors = await loadPyodideAndErrorDefinitions();
+      await loadPyodide();
+      let selectedErrors = await loadErrorDefinitions();
       setSelectedErrors(selectedErrors);
       setPythonLoaded(true);
     })();

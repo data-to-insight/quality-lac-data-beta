@@ -30,7 +30,7 @@ export async function handleUploaded903Data(uploadedFiles: Array<UploadedFile>, 
   return [{ data, errors, errorDefinitions }, uploadErrors]
 }
 
-export async function loadPyodideAndErrorDefinitions(): Promise<Array<ErrorSelected>> {
+export async function loadPyodide() {
   if (!window.pyodide.runPython) {
     await window.loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.17.0/full/" });
     await window.pyodide.loadPackage(['pandas']);
@@ -41,14 +41,20 @@ export async function loadPyodideAndErrorDefinitions(): Promise<Array<ErrorSelec
       import micropip
       await micropip.install(validator_library_path)
       from validator903 import *
-      error_definitions = get_error_definitions_list()
     `);
     console.log('Loaded custom libary.');
   } else {
     console.log('Pyodide already loaded.');
   }
+}
 
-  let errorDefinitionsPy: any = window.pyodide.globals.get("error_definitions");
+export async function loadErrorDefinitions(): Promise<Array<ErrorSelected>> {
+  const pyodide = window.pyodide;
+  await pyodide.runPythonAsync(`
+    all_error_definitions = get_error_definitions_list()
+  `);
+
+  let errorDefinitionsPy: any = window.pyodide.globals.get("all_error_definitions");
 
   let errorDefinitions: Array<ErrorSelected> = [];
   for (let error of errorDefinitionsPy) {
