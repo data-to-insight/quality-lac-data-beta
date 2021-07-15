@@ -1,4 +1,5 @@
 import * as GovUK from 'govuk-react';
+import { Spinner } from '@govuk-react/icons';
 import { useCallback, useEffect, useState } from 'react';
 import { saveAs } from 'file-saver';
 import { handleUploaded903Data, loadPyodideAndErrorDefinitions } from './../api';
@@ -126,9 +127,15 @@ export default function Dashboard() {
 function LoadingBox({children, loading}: any) {
   if (loading) {
     return (
-      <GovUK.LoadingBox loading>
-        {children}
-      </GovUK.LoadingBox>
+      <div style={{ position: 'relative', pointerEvents: 'none'}}>
+        <div style={{width: '100%', position: 'absolute', display: 'flex', justifyContent: 'center', flexWrap: 'wrap'}}>
+          <div style={{width: '100%', textAlign: 'center', height: '25px', fontSize: '24px'}}>Loading Python...</div>
+          <Spinner style={{width: '50px', height: '50px', display: 'block'}} />
+        </div>
+        <div style={{opacity: '30%'}}>
+          {children}
+        </div>
+      </div>
     )
   } else {
     return children
