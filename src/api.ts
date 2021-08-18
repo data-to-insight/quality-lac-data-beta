@@ -1,17 +1,18 @@
 import libraryWheel from './python/903_Validator-0.1.0-py3-none-any.whl'
-import { ValidatedData, UploadedFile, ErrorSelected } from './types';
+import { ValidatedData, UploadedFile, ErrorSelected, UploadMetadata } from './types';
 
-export async function handleUploaded903Data(uploadedFiles: Array<UploadedFile>, selectedErrors: Array<ErrorSelected>): Promise<[ValidatedData, Array<any>]> {
+export async function handleUploaded903Data(uploadedFiles: Array<UploadedFile>, selectedErrors: Array<ErrorSelected>, metadata: UploadMetadata): Promise<[ValidatedData, Array<any>]> {
   const pyodide = window.pyodide;
 
-  console.log('Passing uploaded data to Pyodide...')
-  pyodide.globals.set("uploaded_files", uploadedFiles)
-  pyodide.globals.set("error_codes", selectedErrors.filter(e => e.selected).map(({ code }) => code))
+  console.log('Passing uploaded data to Pyodide...');
+  pyodide.globals.set("uploaded_files", uploadedFiles);
+  pyodide.globals.set("error_codes", selectedErrors.filter(e => e.selected).map(({ code }) => code));
+  pyodide.globals.set("metadata", metadata);
 
   let uploadErrors = [];
   try {
       await pyodide.runPythonAsync(`
-        js_files, errors, error_definitions = run_validation_for_javascript(uploaded_files.to_py(), error_codes=error_codes.to_py())
+        js_files, errors, error_definitions = run_validation_for_javascript(uploaded_files.to_py(), error_codes=error_codes.to_py(), metadata=metadata.to_py())
       `);
   } catch (error) {
       console.log('Caught Error!')

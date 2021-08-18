@@ -5,7 +5,7 @@ import { saveAs } from 'file-saver';
 import { handleUploaded903Data, loadErrorDefinitions, loadPyodide } from './../api';
 import Validator from "./Validator";
 import Uploader from "./Uploader";
-import { ErrorSelected, UploadedFile, UploadedFilesCallback, ValidatedData } from '../types';
+import { ErrorSelected, UploadedFile, UploadedFilesCallback, UploadMetadata, ValidatedData } from '../types';
 import { childColumnName } from '../config';
 import laData from '../data/la_data.json';
 
@@ -15,7 +15,7 @@ export default function Dashboard() {
   const [uploadErrors, setUploadErrors] = useState<Array<any>>([]);
   const [validatedData, setValidatedData] = useState<ValidatedData | null>();
   const [selectedErrors, setSelectedErrors] = useState<Array<ErrorSelected>>([]);
-  const [localAuthority, setLocalAuthority] = useState<string | null>(null);
+  const [localAuthority, setLocalAuthority] = useState<string>(laData[0].la_id);
 
   useEffect(() => {
     (async () => {
@@ -40,7 +40,8 @@ export default function Dashboard() {
   const runValidation = useCallback(async () => {
     setUploadErrors([]);
     setPythonLoaded(false);
-    let [newValidatedData, pythonErrors] = await handleUploaded903Data(fileContents, selectedErrors);
+    let metadata: UploadMetadata = {localAuthority: localAuthority as string}
+    let [newValidatedData, pythonErrors] = await handleUploaded903Data(fileContents, selectedErrors, metadata);
     if (pythonErrors.length === 0) {
       setValidatedData(newValidatedData);
     } else {
@@ -48,7 +49,7 @@ export default function Dashboard() {
       setUploadErrors(pythonErrors)
     }
     setPythonLoaded(true);
-  }, [fileContents, selectedErrors, clearAndUpload])
+  }, [fileContents, selectedErrors, clearAndUpload, localAuthority])
 
   const downloadCSVs = useCallback(() => {
     let childSummaryRows = [["ChildID", "ErrorCode", "ErrorDescription", "ErrorFields"]];
@@ -99,7 +100,7 @@ export default function Dashboard() {
     let storedValue = window.localStorage.getItem('localAuthority');
 
     // Only set this if its present (i.e. fail if our LA list has changed)
-    if (laData.some(la => la.la_id === storedValue)) {
+    if (storedValue && laData.some(la => la.la_id === storedValue)) {
       setLocalAuthority(storedValue);
     }
   }, [setLocalAuthority])

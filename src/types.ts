@@ -6,6 +6,10 @@ type DropzoneUploadedFiles = {description: string, acceptedFiles: Array<File>};
 export type UploadedFilesCallback = (arg: UploadedFile) => void;
 export type UploadedFile = {name: string, fileText: string, description: string}
 
+export type UploadMetadata = {
+    localAuthority: string
+}
+
 /** Used for individual data rows */
 export type DataRow = Map<string, Object>;
 
