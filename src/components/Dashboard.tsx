@@ -14,6 +14,7 @@ export default function Dashboard() {
   const [uploadErrors, setUploadErrors] = useState<Array<any>>([]);
   const [validatedData, setValidatedData] = useState<ValidatedData | null>();
   const [selectedErrors, setSelectedErrors] = useState<Array<ErrorSelected>>([]);
+  const [localAuthority, setLocalAuthority] = useState<string | null>(window.localStorage.getItem('localAuthority'));
 
   useEffect(() => {
     (async () => {
@@ -93,6 +94,17 @@ export default function Dashboard() {
     setSelectedErrors(newSelectedErrors);
   }, [selectedErrors, setSelectedErrors])
 
+  const laList = ["LA1", "LA2"];
+
+  const changeLocalAuthority = useCallback(event => {
+    console.log(window.localStorage.getItem('localAuthority'));
+    setLocalAuthority(event.target.value);
+    window.localStorage.setItem('localAuthority', event.target.value);
+  }, [setLocalAuthority]);
+
+  console.log('top level')
+  console.log(localAuthority)
+
   return (
     <>
     {validatedData
@@ -104,6 +116,10 @@ export default function Dashboard() {
       <GovUK.Details summary={`Validation Rules (${selectedErrors.filter(e => e.selected).length} selected, ${selectedErrors.filter(e => !e.selected).length} unselected)`}>
         {selectedErrors.map(error => <GovUK.Checkbox key={error.code} checked={error.selected} onChange={() => toggleErrorSelection(error)}>{error.code} - {error.description}</GovUK.Checkbox>)}
       </GovUK.Details> 
+
+      <GovUK.Select input={{value: localAuthority}} onChange={changeLocalAuthority} label='Local Authority' mb={4}>
+        {laList.map(la => <option key={la} value={la}>{la}</option>)}
+      </GovUK.Select>
 
       <div style={{marginRight: '10%', display: 'inline'}}>
         <GovUK.Button onClick={runValidation}>Validate</GovUK.Button>
