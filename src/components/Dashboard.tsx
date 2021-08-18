@@ -7,6 +7,7 @@ import Validator from "./Validator";
 import Uploader from "./Uploader";
 import { ErrorSelected, UploadedFile, UploadedFilesCallback, ValidatedData } from '../types';
 import { childColumnName } from '../config';
+import laData from '../data/la_data.json';
 
 export default function Dashboard() {
   const [pythonLoaded, setPythonLoaded] = useState(false);
@@ -14,7 +15,7 @@ export default function Dashboard() {
   const [uploadErrors, setUploadErrors] = useState<Array<any>>([]);
   const [validatedData, setValidatedData] = useState<ValidatedData | null>();
   const [selectedErrors, setSelectedErrors] = useState<Array<ErrorSelected>>([]);
-  const [localAuthority, setLocalAuthority] = useState<string | null>(window.localStorage.getItem('localAuthority'));
+  const [localAuthority, setLocalAuthority] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -94,16 +95,20 @@ export default function Dashboard() {
     setSelectedErrors(newSelectedErrors);
   }, [selectedErrors, setSelectedErrors])
 
-  const laList = ["LA1", "LA2"];
+  useEffect(() => {
+    let storedValue = window.localStorage.getItem('localAuthority');
+
+    // Only set this if its present (i.e. fail if our LA list has changed)
+    if (laData.some(la => la.la_id === storedValue)) {
+      setLocalAuthority(storedValue);
+    }
+  }, [setLocalAuthority])
 
   const changeLocalAuthority = useCallback(event => {
-    console.log(window.localStorage.getItem('localAuthority'));
     setLocalAuthority(event.target.value);
     window.localStorage.setItem('localAuthority', event.target.value);
   }, [setLocalAuthority]);
 
-  console.log('top level')
-  console.log(localAuthority)
 
   return (
     <>
@@ -117,8 +122,8 @@ export default function Dashboard() {
         {selectedErrors.map(error => <GovUK.Checkbox key={error.code} checked={error.selected} onChange={() => toggleErrorSelection(error)}>{error.code} - {error.description}</GovUK.Checkbox>)}
       </GovUK.Details> 
 
-      <GovUK.Select input={{value: localAuthority}} onChange={changeLocalAuthority} label='Local Authority' mb={4}>
-        {laList.map(la => <option key={la} value={la}>{la}</option>)}
+      <GovUK.Select input={{value: localAuthority ? localAuthority : undefined, onChange: changeLocalAuthority}} label='Local Authority' mb={4}>
+        {laData.map(({la_id, la_name}) => <option key={la_id} value={la_id}>{la_name}</option>)}
       </GovUK.Select>
 
       <div style={{marginRight: '10%', display: 'inline'}}>
