@@ -4,3 +4,4 @@ declare module '@govuk-react/icons';
 
 declare module '*.py';
 declare module '*.whl';
+declare module '*.zip';

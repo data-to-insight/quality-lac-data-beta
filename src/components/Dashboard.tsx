@@ -40,7 +40,10 @@ export default function Dashboard() {
   const runValidation = useCallback(async () => {
     setUploadErrors([]);
     setPythonLoaded(false);
-    let metadata: UploadMetadata = {localAuthority: localAuthority as string}
+    let metadata: UploadMetadata = {
+      localAuthority: localAuthority as string,
+      postcodes: await loadPostcodes(),
+    }
     let [newValidatedData, pythonErrors] = await handleUploaded903Data(fileContents, selectedErrors, metadata);
     if (pythonErrors.length === 0) {
       setValidatedData(newValidatedData);
@@ -160,4 +163,11 @@ function LoadingBox({children, loading}: any) {
   } else {
     return children
   }
+}
+
+const loadPostcodes = async () => {
+  let postcodePath = await import('../data/postcodes.zip');
+  let postcodeResponse = await fetch(postcodePath.default);
+  let postcodesArray = await postcodeResponse.blob().then(blob => blob.arrayBuffer());
+  return new Uint8Array(postcodesArray);
 }

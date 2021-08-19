@@ -7,7 +7,8 @@ export type UploadedFilesCallback = (arg: UploadedFile) => void;
 export type UploadedFile = {name: string, fileText: string, description: string}
 
 export type UploadMetadata = {
-    localAuthority: string
+    localAuthority: string,
+    postcodes: Uint8Array,
 }
 
 /** Used for individual data rows */
