@@ -10,7 +10,7 @@ import { childColumnName } from '../config';
 import laData from '../data/la_data.json';
 
 export default function Dashboard() {
-  const [pythonLoaded, setPythonLoaded] = useState(false);
+  const [loadingText, setLoadingText] = useState("Loading Python initially (may take a few minutes)...");
   const [fileContents, setFileContents] = useState<Array<UploadedFile>>([]);
   const [uploadErrors, setUploadErrors] = useState<Array<any>>([]);
   const [validatedData, setValidatedData] = useState<ValidatedData | null>();
@@ -22,7 +22,7 @@ export default function Dashboard() {
       await loadPyodide();
       let selectedErrors = await loadErrorDefinitions();
       setSelectedErrors(selectedErrors);
-      setPythonLoaded(true);
+      setLoadingText("");
     })();
   }, [])
 
@@ -39,11 +39,12 @@ export default function Dashboard() {
 
   const runValidation = useCallback(async () => {
     setUploadErrors([]);
-    setPythonLoaded(false);
+    setLoadingText("Loading postcode file...");
     let metadata: UploadMetadata = {
       localAuthority: localAuthority as string,
       postcodes: await loadPostcodes(),
     }
+    setLoadingText("Running validation...")
     let [newValidatedData, pythonErrors] = await handleUploaded903Data(fileContents, selectedErrors, metadata);
     if (pythonErrors.length === 0) {
       setValidatedData(newValidatedData);
@@ -51,7 +52,7 @@ export default function Dashboard() {
       clearAndUpload();
       setUploadErrors(pythonErrors)
     }
-    setPythonLoaded(true);
+    setLoadingText("");
   }, [fileContents, selectedErrors, clearAndUpload, localAuthority])
 
   const downloadCSVs = useCallback(() => {
@@ -121,7 +122,7 @@ export default function Dashboard() {
       : <Uploader currentFiles={fileContents} addFileContent={addFileContent} uploadErrors={uploadErrors} selectedErrors={selectedErrors} setSelectedErrors={setSelectedErrors}/>
     }
 
-    <LoadingBox loading={(!pythonLoaded) as boolean}>
+    <LoadingBox loading={loadingText}>
       <GovUK.Details summary={`Validation Rules (${selectedErrors.filter(e => e.selected).length} selected, ${selectedErrors.filter(e => !e.selected).length} unselected)`}>
         {selectedErrors.map(error => <GovUK.Checkbox key={error.code} checked={error.selected} onChange={() => toggleErrorSelection(error)}>{error.code} - {error.description}</GovUK.Checkbox>)}
       </GovUK.Details> 
@@ -152,7 +153,7 @@ function LoadingBox({children, loading}: any) {
     return (
       <div style={{ position: 'relative', pointerEvents: 'none'}}>
         <div style={{width: '100%', position: 'absolute', display: 'flex', justifyContent: 'center', flexWrap: 'wrap'}}>
-          <div style={{width: '100%', textAlign: 'center', height: '25px', fontSize: '24px'}}>Loading Python...</div>
+          <div style={{width: '100%', textAlign: 'center', height: '25px', fontSize: '24px'}}>{loading}</div>
           <Spinner style={{width: '50px', height: '50px', display: 'block'}} />
         </div>
         <div style={{opacity: '30%'}}>
