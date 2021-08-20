@@ -10,7 +10,7 @@ import { childColumnName } from '../config';
 import laData from '../data/la_data.json';
 
 export default function Dashboard() {
-  const [loadingText, setLoadingText] = useState("Loading Python initially (may take a few minutes)...");
+  const [loadingText, setLoadingText] = useState("Loading Python initially (takes around 30 seconds)...");
   const [fileContents, setFileContents] = useState<Array<UploadedFile>>([]);
   const [uploadErrors, setUploadErrors] = useState<Array<any>>([]);
   const [validatedData, setValidatedData] = useState<ValidatedData | null>();
@@ -39,7 +39,7 @@ export default function Dashboard() {
 
   const runValidation = useCallback(async () => {
     setUploadErrors([]);
-    setLoadingText("Loading postcode file...");
+    setLoadingText("Loading postcode file (initial load takes 60 seconds)...");
     let metadata: UploadMetadata = {
       localAuthority: localAuthority as string,
       postcodes: await loadPostcodes(),
