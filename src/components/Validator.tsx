@@ -1,6 +1,6 @@
 import * as GovUK from 'govuk-react';
 import ChildSelector from './ChildSelector';
-import { useState, useMemo, useEffect, ReactElement } from 'react';
+import { useState, useMemo, useEffect, useRef, ReactElement } from 'react';
 import { headerTableName, childColumnName } from './../config';
 import DataTable from './DataTable';
 import TabbedData from './TabbedData';
@@ -17,8 +17,26 @@ export default function Validator({ validatedData }: ValidatorProps) {
   let [selectedChild, setSelectedChild] = useState<string | null>(null);
   let [errorDisplayShown, setErrorDisplayShown] = useState(false);
 
+  let errorDisplayRef = useRef(null);
+
   // Scroll to top when this renders
   useEffect(() => window.scrollTo(0, 0), [])
+
+
+  // Close error display if click outside
+  useEffect(() => {
+    const handleClickOutside = async (event: any) => {
+      if (errorDisplayRef.current && !(errorDisplayRef.current as any).contains(event.target)) {
+        setErrorDisplayShown(false);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside)
+    }
+
+  }, [errorDisplayRef])
 
   /**
    * Filters the data that is shown to the selected child
@@ -96,9 +114,18 @@ export default function Validator({ validatedData }: ValidatorProps) {
       <GovUK.GridCol setWidth='200px'>
         <div>
           <GovUK.H4 mb={8} style={{'display': 'inline', 'marginRight': '10px'}}>Child ID</GovUK.H4>
-          <button onClick={() => {setErrorDisplayShown(!errorDisplayShown)}} style={{display: 'inline', backgroundColor: (childFilter || errorFilter) ? '#a7c2d1' : undefined}}>Filter</button>
+          <button 
+            onClick={event => {
+              // Stop the click-outside event from also firing
+              event.stopPropagation();
+              setErrorDisplayShown(!errorDisplayShown);
+            }} 
+            style={{display: 'inline', backgroundColor: (childFilter || errorFilter) ? '#a7c2d1' : undefined}}
+          >Filter</button>
         </div>
-        <ErrorDisplay validatedData={validatedData} isShown={errorDisplayShown} setChildFilter={setChildFilter} setErrorFilter={setErrorFilter} />
+        {errorDisplayShown
+          && <ErrorDisplay innerRef={errorDisplayRef} validatedData={validatedData} setChildFilter={setChildFilter} setErrorFilter={setErrorFilter} setShown={setErrorDisplayShown}/>
+        }
         <ChildSelector childIds={filteredIdsWithErrorCounts} selected={selectedChild} setSelected={setSelectedChild} />
       </GovUK.GridCol>
       <GovUK.GridCol>
