@@ -6,14 +6,15 @@ import styled from 'styled-components';
 
 interface ErrorDisplayProps {
   validatedData: ValidatedData,
-  isShown: boolean,
   setChildFilter: (arg: string | null) => void;
   setErrorFilter: (arg: string | null) => void;
+  innerRef: React.RefObject<HTMLInputElement>
 }
 
 // The margin-bottom has to equal height + margin-top + border (top/bottom) + padding (top/bottom)
 const ErrorStyles = styled.div`
 .floatingContainer {
+  display: block;
   position: relative;
   padding: 10px 10px;
   top: 0;
@@ -42,7 +43,7 @@ table {
 }
 `
 
-export default function ErrorDisplay({ validatedData, isShown, setChildFilter, setErrorFilter }: ErrorDisplayProps): ReactElement {
+export default function ErrorDisplay({ validatedData, setChildFilter, setErrorFilter, innerRef }: ErrorDisplayProps): ReactElement {
   const [filterText, setFilterText] = useState('');
   const [selectedError, setSelectedError] = useState(null);
 
@@ -63,11 +64,11 @@ export default function ErrorDisplay({ validatedData, isShown, setChildFilter, s
       let isSelected = errorCode === selectedError
       
       return (
-        <GovUK.Table.Row key={errorCode} className={isSelected ? 'selectedError' : null} onClick={() => setSelectedError(isSelected ? null : errorCode)}>
-          <GovUK.Table.Cell>{errorCode}</GovUK.Table.Cell>
-          <GovUK.Table.Cell>{errorDetails?.get('description')}</GovUK.Table.Cell>
-          <GovUK.Table.Cell>{count}</GovUK.Table.Cell>
-        </GovUK.Table.Row>
+          <GovUK.Table.Row key={errorCode} className={isSelected ? 'selectedError' : null} onClick={() => setSelectedError(isSelected ? null : errorCode)}>
+            <GovUK.Table.Cell>{errorCode}</GovUK.Table.Cell>
+            <GovUK.Table.Cell>{errorDetails?.get('description')}</GovUK.Table.Cell>
+            <GovUK.Table.Cell>{count}</GovUK.Table.Cell>
+          </GovUK.Table.Row>
       )
     })
   }, [validatedData, selectedError]);
@@ -87,7 +88,7 @@ export default function ErrorDisplay({ validatedData, isShown, setChildFilter, s
 
   return (
     <ErrorStyles>
-      <div className='floatingContainer' style={{display: isShown ? 'block' : 'none'}}>
+      <div ref={innerRef} className='floatingContainer'>
         <DebounceInput minLength={2} debounceTimeout={150} onChange={event => setFilterText(event.target.value)} value={filterText} placeholder="Enter a child ID to filter..." />
         <button style={{float: 'right'}} onClick={clearFilters}>Clear filters</button>
         <p>Click each row to filter for only that error type.</p>

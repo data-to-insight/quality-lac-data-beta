@@ -1,4 +1,5 @@
 import * as GovUK from 'govuk-react';
+import React from 'react';
 
 interface ChildSelectorProps {
     childIds: Array<[string, number]>,
