@@ -124,7 +124,7 @@ export default function Validator({ validatedData }: ValidatorProps) {
           >Filter</button>
         </div>
         {errorDisplayShown
-          && <ErrorDisplay innerRef={errorDisplayRef} validatedData={validatedData} setChildFilter={setChildFilter} setErrorFilter={setErrorFilter} />
+          && <ErrorDisplay innerRef={errorDisplayRef} validatedData={validatedData} setChildFilter={setChildFilter} setErrorFilter={setErrorFilter} setShown={setErrorDisplayShown}/>
         }
         <ChildSelector childIds={filteredIdsWithErrorCounts} selected={selectedChild} setSelected={setSelectedChild} />
       </GovUK.GridCol>

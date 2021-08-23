@@ -8,6 +8,7 @@ interface ErrorDisplayProps {
   validatedData: ValidatedData,
   setChildFilter: (arg: string | null) => void;
   setErrorFilter: (arg: string | null) => void;
+  setShown: (arg: boolean) => void;
   innerRef: React.RefObject<HTMLInputElement>
 }
 
@@ -28,6 +29,14 @@ const ErrorStyles = styled.div`
   font-size: 10px;
 }  
 
+.floatingClose {
+  cursor: pointer;
+  float: right;
+  position: relative;
+  top: -23px;
+  left: 10px;
+}
+
 input {
   height: 13px;
   width: 180px;
@@ -43,7 +52,7 @@ table {
 }
 `
 
-export default function ErrorDisplay({ validatedData, setChildFilter, setErrorFilter, innerRef }: ErrorDisplayProps): ReactElement {
+export default function ErrorDisplay({ validatedData, setChildFilter, setErrorFilter, setShown, innerRef }: ErrorDisplayProps): ReactElement {
   const [filterText, setFilterText] = useState('');
   const [selectedError, setSelectedError] = useState(null);
 
@@ -90,6 +99,7 @@ export default function ErrorDisplay({ validatedData, setChildFilter, setErrorFi
     <ErrorStyles>
       <div ref={innerRef} className='floatingContainer'>
         <DebounceInput minLength={2} debounceTimeout={150} onChange={event => setFilterText(event.target.value)} value={filterText} placeholder="Enter a child ID to filter..." />
+        <span onClick={() => setShown(false)} className='floatingClose'>[x]</span>
         <button style={{float: 'right'}} onClick={clearFilters}>Clear filters</button>
         <p>Click each row to filter for only that error type.</p>
         <GovUK.Table>
