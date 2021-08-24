@@ -35,12 +35,12 @@ export default function Uploader({ currentFiles, addFileContent, uploadErrors, s
       reader.onabort = () => console.log('File reading failed.')
       reader.onerror = () => console.log('File reading error.')
       reader.onload = () =>  {
-        const fileText = reader.result as string;
+        const fileText = reader.result as ArrayBuffer;
         console.log(`Finished reading (${description}) file ${file.name}.`);
         addFileContent({name: file.name, description, fileText });
       }
 
-      reader.readAsText(file);
+      reader.readAsArrayBuffer(file);
     })
   }, [addFileContent])
 

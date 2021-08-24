@@ -32,9 +32,9 @@ export async function handleUploaded903Data(uploadedFiles: Array<UploadedFile>, 
 }
 
 export async function loadPyodide() {
-  if (!window.pyodide.runPython) {
-    await window.loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.17.0/full/" });
-    await window.pyodide.loadPackage(['pandas']);
+  if (!window.pyodide?.runPython) {
+    window.pyodide = await window.loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.18.0/full/" });
+    await window.pyodide.loadPackage(['micropip']);
     console.log('Loaded pyodide, now loading custom library...');
 
     window.pyodide.globals.set("validator_library_path", libraryWheel);

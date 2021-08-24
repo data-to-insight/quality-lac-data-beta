@@ -4,7 +4,7 @@ type DropzoneUploadedFiles = {description: string, acceptedFiles: Array<File>};
 
 /** Callback types for the Uploader */
 export type UploadedFilesCallback = (arg: UploadedFile) => void;
-export type UploadedFile = {name: string, fileText: string, description: string}
+export type UploadedFile = {name: string, fileText: ArrayBuffer, description: string}
 
 export type UploadMetadata = {
     localAuthority: string,
