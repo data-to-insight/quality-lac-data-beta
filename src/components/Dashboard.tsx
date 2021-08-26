@@ -1,6 +1,6 @@
 import * as GovUK from 'govuk-react';
 import { Spinner } from '@govuk-react/icons';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { saveAs } from 'file-saver';
 import { handleUploaded903Data, loadErrorDefinitions, loadPyodide } from './../api';
 import Validator from "./Validator";
@@ -47,6 +47,7 @@ export default function Dashboard() {
     setLoadingText("Loading postcode file (initial load takes 60 seconds)...");
     let metadata: UploadMetadata = {
       localAuthority: localAuthority as string,
+      collectionYear: collectionYear,
       postcodes: await loadPostcodes(),
     }
     setLoadingText("Running validation...")
@@ -58,7 +59,7 @@ export default function Dashboard() {
       setUploadErrors(pythonErrors)
     }
     setLoadingText("");
-  }, [fileContents, selectedErrors, clearAndUpload, localAuthority])
+  }, [fileContents, selectedErrors, clearAndUpload, localAuthority, collectionYear])
 
   const downloadCSVs = useCallback(() => {
     let childSummaryRows = [["ChildID", "ErrorCode", "ErrorDescription", "ErrorFields"]];
@@ -126,7 +127,7 @@ export default function Dashboard() {
       ? <Validator validatedData={validatedData} />
       : <>
         <Uploader currentFiles={fileContents} addFileContent={addFileContent} uploadErrors={uploadErrors} selectedErrors={selectedErrors} setSelectedErrors={setSelectedErrors}/>
-        <GovUK.Select input={{value: collectionYear, onChange: (e: any) => setCollectionYear(e.target.value)}} label='Collection Year' mb={4}>
+        <GovUK.Select input={{value: collectionYear, onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCollectionYear(e.target.value)}} label='Collection Year' mb={4}>
           {collectionYears.map(collectionYear => <option key={collectionYear} value={collectionYear}>{collectionYear}</option>)}
         </GovUK.Select>
         <GovUK.Select input={{value: localAuthority ? localAuthority : undefined, onChange: changeLocalAuthority}} label='Local Authority' mb={4}>

@@ -8,6 +8,7 @@ export type UploadedFile = {name: string, fileText: ArrayBuffer, description: st
 
 export type UploadMetadata = {
     localAuthority: string,
+    collectionYear: string,
     postcodes: Uint8Array,
 }
 
