@@ -9,6 +9,7 @@ import { ErrorSelected, UploadedFile, UploadedFilesCallback, UploadMetadata, Val
 import { childColumnName } from '../config';
 import laData from '../data/la_data.json';
 import Dexie from 'dexie';
+import { useMemo } from 'react';
 
 export default function Dashboard() {
   const [loadingText, setLoadingText] = useState("Loading Python initially (takes around 30 seconds)...");
@@ -17,6 +18,9 @@ export default function Dashboard() {
   const [validatedData, setValidatedData] = useState<ValidatedData | null>();
   const [selectedErrors, setSelectedErrors] = useState<Array<ErrorSelected>>([]);
   const [localAuthority, setLocalAuthority] = useState<string>(laData[0].la_id);
+
+  const collectionYears = useMemo(() => getCollectionYears(5), []);
+  const [collectionYear, setCollectionYear] = useState<string>(collectionYears[0]);
 
   useEffect(() => {
     (async () => {
@@ -120,7 +124,15 @@ export default function Dashboard() {
     <>
     {validatedData
       ? <Validator validatedData={validatedData} />
-      : <Uploader currentFiles={fileContents} addFileContent={addFileContent} uploadErrors={uploadErrors} selectedErrors={selectedErrors} setSelectedErrors={setSelectedErrors}/>
+      : <>
+        <Uploader currentFiles={fileContents} addFileContent={addFileContent} uploadErrors={uploadErrors} selectedErrors={selectedErrors} setSelectedErrors={setSelectedErrors}/>
+        <GovUK.Select input={{value: collectionYear, onChange: (e: any) => setCollectionYear(e.target.value)}} label='Collection Year' mb={4}>
+          {collectionYears.map(collectionYear => <option key={collectionYear} value={collectionYear}>{collectionYear}</option>)}
+        </GovUK.Select>
+        <GovUK.Select input={{value: localAuthority ? localAuthority : undefined, onChange: changeLocalAuthority}} label='Local Authority' mb={4}>
+          {laData.map(({la_id, la_name}) => <option key={la_id} value={la_id}>{la_name}</option>)}
+        </GovUK.Select>
+      </>
     }
 
     <LoadingBox loading={loadingText}>
@@ -128,9 +140,6 @@ export default function Dashboard() {
         {selectedErrors.map(error => <GovUK.Checkbox key={error.code} checked={error.selected} onChange={() => toggleErrorSelection(error)}>{error.code} - {error.description}</GovUK.Checkbox>)}
       </GovUK.Details> 
 
-      <GovUK.Select input={{value: localAuthority ? localAuthority : undefined, onChange: changeLocalAuthority}} label='Local Authority' mb={4}>
-        {laData.map(({la_id, la_name}) => <option key={la_id} value={la_id}>{la_name}</option>)}
-      </GovUK.Select>
 
       <div style={{marginRight: '10%', display: 'inline'}}>
         <GovUK.Button onClick={runValidation}>Validate</GovUK.Button>
@@ -185,4 +194,18 @@ const loadPostcodes = async () => {
   }
   let postcodeArray = await postcodeBlob.data.arrayBuffer()
   return postcodeArray;
+}
+
+function getCollectionYears(num_years: number): Array<string> {
+  let currentDate = new Date();
+  let currentYear = currentDate.getFullYear()
+  if (currentDate.getMonth() < 4) {
+    currentYear = currentYear - 1
+  }
+  let years = [currentYear]
+  for (let i = 1; i < num_years; i++) {
+    years.push(currentYear - i)
+  }
+
+  return years.map(year => `${year}/${(year + 1) % 100}`)
 }
