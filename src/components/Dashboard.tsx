@@ -184,5 +184,5 @@ const loadPostcodes = async () => {
     console.log('Stored postcodes found!')
   }
   let postcodeArray = await postcodeBlob.data.arrayBuffer()
-  return new Uint8Array(postcodeArray);
+  return postcodeArray;
 }
