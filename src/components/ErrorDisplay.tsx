@@ -42,9 +42,14 @@ input {
   width: 180px;
 }
 
+.errorFilter {
+  height: 250px;
+  overflow-y: scroll;
+  padding-right: 10px;
+}
+
 table {
   font-size: 10px;
-  overflow-y: auto;
 }
 
 .selectedError {
@@ -102,14 +107,16 @@ export default function ErrorDisplay({ validatedData, setChildFilter, setErrorFi
         <span onClick={() => setShown(false)} className='floatingClose'>[x]</span>
         <button style={{float: 'right'}} onClick={clearFilters}>Clear filters</button>
         <p>Click each row to filter for only that error type.</p>
-        <GovUK.Table>
-          <GovUK.Table.Row>
-            <GovUK.Table.CellHeader>Code</GovUK.Table.CellHeader>
-            <GovUK.Table.CellHeader>Message</GovUK.Table.CellHeader>
-            <GovUK.Table.CellHeader>Count</GovUK.Table.CellHeader>
-          </GovUK.Table.Row>
-          {errorRows}
-        </GovUK.Table>
+        <div className='errorFilter'>
+          <GovUK.Table>
+            <GovUK.Table.Row>
+              <GovUK.Table.CellHeader>Code</GovUK.Table.CellHeader>
+              <GovUK.Table.CellHeader>Message</GovUK.Table.CellHeader>
+              <GovUK.Table.CellHeader>Count</GovUK.Table.CellHeader>
+            </GovUK.Table.Row>
+            {errorRows}
+          </GovUK.Table>
+        </div>
       </div>
     </ErrorStyles>
   )
