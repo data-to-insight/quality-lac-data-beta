@@ -9,7 +9,7 @@ interface ChildSelectorProps {
 
 export default function ChildSelector({ childIds, selected, setSelected }: ChildSelectorProps) {
   let rows = [];
-  for (const [i, [childId, numErrors]] of childIds.entries()) {
+  for (const [i, [childId, numErrors]] of childIds.sort((a, b) => a[0].toString().localeCompare(b[0].toString())).entries()) {
     let selectionTarget: string | null = childId;
     let cellStyle = null;
     
