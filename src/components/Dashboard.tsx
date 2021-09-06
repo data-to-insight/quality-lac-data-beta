@@ -74,7 +74,8 @@ export default function Dashboard() {
         errorList?.forEach(errorCode => {
           let errorDefn = validatedData.errorDefinitions.get(errorCode) as Map<string, any>;
           let errorFields = errorDefn?.get('affected_fields')?.toString();
-          childSummaryRows.push([child, errorCode, errorDefn?.get("description") as string, errorFields as string]);
+          childSummaryRows.push([`"${child}"`, `"${errorCode}"`, `"${errorDefn?.get("description") as string}"`,
+            `"${errorFields as string}"`]);
 
           errorCounts.set(errorCode, errorCounts.has(errorCode) ? errorCounts.get(errorCode) + 1 : 1)
         })
