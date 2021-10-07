@@ -36,7 +36,7 @@ export default function Dashboard() {
     setFileContents([...fileContents]);
   }, [fileContents])
 
-  const clearAndUpload = useCallback(() => {
+  const clearAndRestart = useCallback(() => {
     setUploadErrors([]);
     setValidatedData(null);
     setFileContents([]);
@@ -55,11 +55,11 @@ export default function Dashboard() {
     if (pythonErrors.length === 0) {
       setValidatedData(newValidatedData);
     } else {
-      clearAndUpload();
+      clearAndRestart();
       setUploadErrors(pythonErrors)
     }
     setLoadingText("");
-  }, [fileContents, selectedErrors, clearAndUpload, localAuthority, collectionYear])
+  }, [fileContents, selectedErrors, clearAndRestart, localAuthority, collectionYear])
 
   const downloadCSVs = useCallback(() => {
     let childSummaryRows = [["ChildID", "ErrorCode", "ErrorDescription", "ErrorFields"]];
@@ -147,7 +147,7 @@ export default function Dashboard() {
         <GovUK.Button onClick={runValidation}>Validate</GovUK.Button>
       </div>
       <div style={{marginRight: '10%', display: 'inline'}}>
-        <GovUK.Button onClick={clearAndUpload}>Clear Data and Reupload</GovUK.Button>
+        <GovUK.Button onClick={clearAndRestart}>Clear Data and Start Again</GovUK.Button>
       </div>
       <div style={{marginRight: '10%', display: 'inline'}}>
         {validatedData
