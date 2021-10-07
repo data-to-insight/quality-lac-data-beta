@@ -83,7 +83,7 @@ export default function Dashboard() {
     })
 
     errorCounts.forEach((numErrors, errorCode) => {
-      errorCountRows.push([errorCode, validatedData?.errorDefinitions.get(errorCode)?.get('description'), numErrors]);
+      errorCountRows.push([`"${errorCode}"`, `"${validatedData?.errorDefinitions.get(errorCode)?.get('description')}"`, `${numErrors}`]);
     })
 
     let childErrorContent = new Blob([childSummaryRows.map(r => r.join(",")).join('\n')], {type: 'text/csv'});
