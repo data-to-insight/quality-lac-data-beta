@@ -8,8 +8,8 @@ import Uploader from "./Uploader";
 import { ErrorSelected, UploadedFile, UploadedFilesCallback, UploadMetadata, ValidatedData } from '../types';
 import { childColumnName } from '../config';
 import laData from '../data/la_data.json';
-import Dexie from 'dexie';
 import { useMemo } from 'react';
+import usePostcodes from "../hooks/usePostcodes";
 
 export default function Dashboard() {
   const [loadingText, setLoadingText] = useState("Loading Python initially (takes around 30 seconds)...");
@@ -18,6 +18,7 @@ export default function Dashboard() {
   const [validatedData, setValidatedData] = useState<ValidatedData | null>();
   const [selectedErrors, setSelectedErrors] = useState<Array<ErrorSelected>>([]);
   const [localAuthority, setLocalAuthority] = useState<string>(laData[0].la_id);
+  const postcodes = usePostcodes();
 
   const collectionYears = useMemo(() => getCollectionYears(5), []);
   const [collectionYear, setCollectionYear] = useState<string>(collectionYears[0]);
@@ -48,7 +49,7 @@ export default function Dashboard() {
     let metadata: UploadMetadata = {
       localAuthority: localAuthority as string,
       collectionYear: collectionYear,
-      postcodes: await loadPostcodes(),
+      postcodes: postcodes,
     }
     setLoadingText("Running validation...")
     let [newValidatedData, pythonErrors] = await handleUploaded903Data(fileContents, selectedErrors, metadata);
@@ -59,7 +60,7 @@ export default function Dashboard() {
       setUploadErrors(pythonErrors)
     }
     setLoadingText("");
-  }, [fileContents, selectedErrors, clearAndRestart, localAuthority, collectionYear])
+  }, [fileContents, selectedErrors, clearAndRestart, localAuthority, collectionYear, postcodes])
 
   const downloadCSVs = useCallback(() => {
     let childSummaryRows = [["ChildID", "ErrorCode", "ErrorDescription", "ErrorFields"]];
@@ -176,26 +177,6 @@ function LoadingBox({children, loading}: any) {
   } else {
     return children
   }
-}
-
-const loadPostcodes = async () => {
-  let db = new Dexie('postcodes') as any;
-  db.version(1).stores({postcodes: 'id, data'});
-  let postcodeBlob = await db.postcodes.get(1);
-  if (!postcodeBlob) {
-    console.log('Storing postcodes file...')
-    let postcodePath = await import('../data/postcodes.zip');
-    let postcodeResponse = await fetch(postcodePath.default);
-    await db.postcodes.put({
-      id: 1,
-      data: await postcodeResponse.blob(),
-    })
-    postcodeBlob = await db.postcodes.get(1);
-  } else {
-    console.log('Stored postcodes found!')
-  }
-  let postcodeArray = await postcodeBlob.data.arrayBuffer()
-  return postcodeArray;
 }
 
 function getCollectionYears(num_years: number): Array<string> {
