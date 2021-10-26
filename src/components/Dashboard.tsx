@@ -107,6 +107,17 @@ export default function Dashboard() {
     setSelectedErrors(newSelectedErrors);
   }, [selectedErrors, setSelectedErrors])
 
+  const setAllErrors = useCallback(newState => {
+    let newSelectedErrors: Array<ErrorSelected> = [];
+    for (let error of selectedErrors) {
+      let errorCopy = { ...error }
+      errorCopy.selected = newState;
+      newSelectedErrors.push(errorCopy);
+    }
+
+    setSelectedErrors(newSelectedErrors);
+  }, [selectedErrors, setSelectedErrors])
+
   useEffect(() => {
     let storedValue = window.localStorage.getItem('localAuthority');
 
@@ -139,8 +150,10 @@ export default function Dashboard() {
 
     <LoadingBox loading={loadingText}>
       <GovUK.Details summary={`Validation Rules (${selectedErrors.filter(e => e.selected).length} selected, ${selectedErrors.filter(e => !e.selected).length} unselected)`}>
+        <GovUK.Button onClick={() => setAllErrors(true)}>Select All </GovUK.Button> <GovUK.Button onClick={() => setAllErrors(false)}>Deselect All </GovUK.Button>
         {selectedErrors.map(error => <GovUK.Checkbox key={error.code} checked={error.selected} onChange={() => toggleErrorSelection(error)}>{error.code} - {error.description}</GovUK.Checkbox>)}
-      </GovUK.Details> 
+      </GovUK.Details>
+
 
 
       <div style={{marginRight: '10%', display: 'inline'}}>
