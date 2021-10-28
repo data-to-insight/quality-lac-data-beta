@@ -7,7 +7,7 @@ const usePostcodes = () => {
     const fetchData = async () => {
       const postcodePath = await import('../data/postcodes.zip');
       const postcodeResponse = await fetch(postcodePath.default);
-      const data = await postcodeResponse.blob();
+      const data = await postcodeResponse.arrayBuffer();
       setPostcodes(data)
     }
     fetchData()
