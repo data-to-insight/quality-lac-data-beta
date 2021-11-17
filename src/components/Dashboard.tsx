@@ -1,15 +1,14 @@
 import * as GovUK from 'govuk-react';
 import { Spinner } from '@govuk-react/icons';
 import React, { useCallback, useEffect, useState } from 'react';
-import { saveAs } from 'file-saver';
-import { handleUploaded903Data, loadErrorDefinitions, loadPyodide } from './../api';
+import { handleUploaded903Data, loadErrorDefinitions, loadPyodide } from '../api';
 import Validator from "./Validator";
 import Uploader from "./Uploader";
 import { ErrorSelected, UploadedFile, UploadedFilesCallback, UploadMetadata, ValidatedData } from '../types';
-import { childColumnName } from '../config';
 import laData from '../data/la_data.json';
 import { useMemo } from 'react';
 import usePostcodes from "../hooks/usePostcodes";
+import {generateReport, saveChildSummary, saveErrorSummary} from "../helpers/report/ChildErrorReport";
 
 export default function Dashboard() {
   const [loadingText, setLoadingText] = useState("Loading Python initially (takes around 30 seconds)...");
@@ -63,35 +62,12 @@ export default function Dashboard() {
   }, [fileContents, selectedErrors, clearAndRestart, localAuthority, collectionYear, postcodes])
 
   const downloadCSVs = useCallback(() => {
-    let childSummaryRows = [["ChildID", "ErrorCode", "ErrorDescription", "ErrorFields"]];
-    let errorCountRows = [['ErrorCode', 'ErrorDescription', 'NumErrors']];
-    let errorCounts = new Map();
-    validatedData?.data.forEach((table, tableName) => {
-      let errors = validatedData.errors.get(tableName);
-      table.forEach(dataRow => {
-        let index = dataRow.get('Index') as number;
-        let child = dataRow.get(childColumnName) as string;
-        let errorList = errors?.get(index);
-        errorList?.forEach(errorCode => {
-          let errorDefn = validatedData.errorDefinitions.get(errorCode) as Map<string, any>;
-          let errorFields = errorDefn?.get('affected_fields')?.toString();
-          childSummaryRows.push([`"${child}"`, `"${errorCode}"`, `"${errorDefn?.get("description") as string}"`,
-            `"${errorFields as string}"`]);
+    if (validatedData) {
+      const report = generateReport(validatedData);
+      saveChildSummary(report);
+      saveErrorSummary(report);
+    }
 
-          errorCounts.set(errorCode, errorCounts.has(errorCode) ? errorCounts.get(errorCode) + 1 : 1)
-        })
-      })
-    })
-
-    errorCounts.forEach((numErrors, errorCode) => {
-      errorCountRows.push([`"${errorCode}"`, `"${validatedData?.errorDefinitions.get(errorCode)?.get('description')}"`, `${numErrors}`]);
-    })
-
-    let childErrorContent = new Blob([childSummaryRows.map(r => r.join(",")).join('\n')], {type: 'text/csv'});
-    saveAs(childErrorContent, 'ChildErrorSummary.csv');
-
-    let errorSummaryContent = new Blob([errorCountRows.map(r => r.join(",")).join('\n')], {type: 'text/csv'});
-    saveAs(errorSummaryContent, 'ErrorCounts.csv');
 
   }, [validatedData])
 
