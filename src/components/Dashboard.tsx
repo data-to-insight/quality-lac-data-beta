@@ -7,8 +7,9 @@ import Uploader from "./Uploader";
 import { ErrorSelected, UploadedFile, UploadedFilesCallback, UploadMetadata, ValidatedData } from '../types';
 import laData from '../data/la_data.json';
 import { useMemo } from 'react';
-import usePostcodes from "../hooks/usePostcodes";
-import {generateReport, saveChildSummary, saveErrorSummary} from "../helpers/report/ChildErrorReport";
+import {
+  saveErrorSummary,
+} from "../helpers/report/ChildErrorReport";
 
 export default function Dashboard() {
   const [loadingText, setLoadingText] = useState("Loading Python initially (takes around 30 seconds)...");
@@ -17,7 +18,6 @@ export default function Dashboard() {
   const [validatedData, setValidatedData] = useState<ValidatedData | null>();
   const [selectedErrors, setSelectedErrors] = useState<Array<ErrorSelected>>([]);
   const [localAuthority, setLocalAuthority] = useState<string>(laData[0].la_id);
-  const postcodes = usePostcodes();
 
   const collectionYears = useMemo(() => getCollectionYears(5), []);
   const [collectionYear, setCollectionYear] = useState<string>(collectionYears[0]);
@@ -45,10 +45,9 @@ export default function Dashboard() {
   const runValidation = useCallback(async () => {
     setUploadErrors([]);
     setLoadingText("Loading postcode file (initial load takes 60 seconds)...");
-    let metadata: UploadMetadata = {
+    const metadata: UploadMetadata = {
       localAuthority: localAuthority as string,
       collectionYear: collectionYear,
-      postcodes: postcodes,
     }
     setLoadingText("Running validation...")
     let [newValidatedData, pythonErrors] = await handleUploaded903Data(fileContents, selectedErrors, metadata);
@@ -59,13 +58,18 @@ export default function Dashboard() {
       setUploadErrors(pythonErrors)
     }
     setLoadingText("");
-  }, [fileContents, selectedErrors, clearAndRestart, localAuthority, collectionYear, postcodes])
+  }, [fileContents, selectedErrors, clearAndRestart, localAuthority, collectionYear])
 
-  const downloadCSVs = useCallback(() => {
+  const downloadCSVs = useCallback( () => {
     if (validatedData) {
-      const report = generateReport(validatedData);
-      saveChildSummary(report);
-      saveErrorSummary(report);
+      Promise.all([
+        saveErrorSummary('ErrorCounts'),
+        saveErrorSummary('ChildErrorSummary'),
+      ]).then(() => {
+        console.log("Export completed")
+      }).catch(() => {
+        console.error("Export failed")
+      })
     }
 
 

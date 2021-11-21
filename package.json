@@ -11,6 +11,7 @@
     "@types/react": "^17.0.13",
     "@types/react-dom": "^17.0.8",
     "danfojs": "^0.2.7",
+    "dayjs": "^1.10.7",
     "dexie": "^3.0.3",
     "file-saver": "^2.0.5",
     "govuk-react": "^0.9.0",

@@ -1,46 +1,37 @@
-import {childColumnName} from "../../config";
-import {ValidatedData} from "../../types";
 import {saveAs} from "file-saver";
+import dayjs from "dayjs";
 
-interface ChildReport {
-    childSummaryRows: string[][],
-    errorCountRows: string[][],
+export const saveErrorSummary = async (report_type: string) => {
+    const time = dayjs().format('YYYYMMDD-HHmmss')
+    const report_name = report_type === "ChildErrorSummary" ? 'children' : 'errors';
+    const pyodide = window.pyodide;
+    try {
+        const report = pyodide.globals.get("report");
+        const report_data = report.csv_report(report_name);
+        let errorSummaryContent = new Blob([report_data],
+            {type: 'text/csv'});
+        report.destroy()
+        saveAs(errorSummaryContent, `${report_type}-${time}.csv`);
+    } catch (error) {
+        console.log('Caught Error!')
+        console.log(error.toString());
+    }
 }
 
-export const generateReport = (validatedData: ValidatedData): ChildReport => {
-    let childSummaryRows = [["ChildID", "ErrorCode", "ErrorDescription", "ErrorFields"]];
-    let errorCountRows = [['ErrorCode', 'ErrorDescription', 'NumErrors']];
-    let errorCounts = new Map();
-    validatedData?.data.forEach((table, tableName) => {
-        let errors = validatedData.errors.get(tableName);
-        table.forEach(dataRow => {
-            let index = dataRow.get('Index') as number;
-            let child = dataRow.get(childColumnName) as string;
-            let errorList = errors?.get(index);
-            errorList?.forEach(errorCode => {
-                let errorDefn = validatedData.errorDefinitions.get(errorCode) as Map<string, any>;
-                let errorFields = errorDefn?.get('affected_fields')?.toString();
-                childSummaryRows.push([`"${child}"`, `"${errorCode}"`, `"${errorDefn?.get("description") as string}"`,
-                    `"${errorFields as string}"`]);
-
-                errorCounts.set(errorCode, errorCounts.has(errorCode) ? errorCounts.get(errorCode) + 1 : 1)
-            })
-        })
-    })
-
-    errorCounts.forEach((numErrors, errorCode) => {
-        errorCountRows.push([`"${errorCode}"`, `"${validatedData?.errorDefinitions.get(errorCode)?.get('description')}"`, `${numErrors}`]);
-    })
-
-    return {childSummaryRows, errorCountRows}
+export const saveExcelSummary = async () => {
+    const time = dayjs().format('YYYYMMDD-HHmmss')
+    const pyodide = window.pyodide;
+    try {
+        const report = pyodide.globals.get("report");
+        const report_data = report.excel_report()
+        let errorSummaryContent = new Blob([report_data.toJs],
+            {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+        report.destroy()
+        report_data.destroy()
+        saveAs(errorSummaryContent, `ErrorReport-${time}.xlsx`);
+    } catch (error) {
+        console.log('Caught Error!')
+        console.log(error.toString());
+    }
 }
 
-export const saveChildSummary = ({childSummaryRows}: ChildReport) => {
-    const childErrorContent = new Blob([childSummaryRows.map(r => r.join(",")).join('\n')], {type: 'text/csv'});
-    saveAs(childErrorContent, 'ChildErrorSummary.csv');
-}
-
-export const saveErrorSummary = ({errorCountRows}: ChildReport) => {
-    let errorSummaryContent = new Blob([errorCountRows.map(r => r.join(",")).join('\n')], {type: 'text/csv'});
-    saveAs(errorSummaryContent, 'ErrorCounts.csv');
-}
