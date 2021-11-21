@@ -26,7 +26,7 @@ jobs:
       - name: Install and Build 🔧
         run: |
           yarn install --frozen-lockfile
-          yarn build
+          PUBLIC_URL="/quality-lac-data-beta/" yarn build
 
       - name: Deploy 🚀
         if: github.ref == 'refs/heads/main'
