@@ -1,4 +1,3 @@
-import libraryWheel from './python/903_Validator-0.2.0b0-py3-none-any.whl'
 import { ValidatedData, UploadedFile, ErrorSelected, UploadMetadata } from './types';
 
 export async function handleUploaded903Data(uploadedFiles: Array<UploadedFile>, selectedErrors: Array<ErrorSelected>, metadata: UploadMetadata): Promise<[ValidatedData, Array<any>]> {
@@ -62,13 +61,12 @@ export async function loadPyodide() {
     await window.pyodide.loadPackage(['micropip']);
     console.log('Loaded pyodide, now loading custom library...');
 
-    window.pyodide.globals.set("validator_library_path", libraryWheel);
     await window.pyodide.runPythonAsync(`
       import logging
       logging.basicConfig(level=logging.DEBUG)
       
       import micropip
-      await micropip.install(validator_library_path)
+      await micropip.install('quality-lac-data-validator')
     `);
     console.log('Loaded custom libary.');
   } else {
