@@ -37,9 +37,9 @@ export async function handleUploaded903Data(uploadedFiles: Array<UploadedFile>, 
       `);
   } catch (error) {
       console.log('Caught Error!')
-      console.log(error.toString());
+      console.log((error as Error).toString());
       // We need to take the second to last line to get the exception text.
-      const errorLines = error.toString().split('\n')
+      const errorLines = (error as Error).toString().split('\n')
       uploadErrors.push(errorLines[errorLines.length - 2]);
   }
 

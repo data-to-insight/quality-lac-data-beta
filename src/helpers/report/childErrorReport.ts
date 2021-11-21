@@ -14,7 +14,7 @@ export const saveErrorSummary = async (report_type: string) => {
         saveAs(errorSummaryContent, `${report_type}-${time}.csv`);
     } catch (error) {
         console.log('Caught Error!')
-        console.log(error.toString());
+        console.log((error as Error).toString());
     }
 }
 
@@ -31,7 +31,7 @@ export const saveExcelSummary = async () => {
         saveAs(errorSummaryContent, `ErrorReport-${time}.xlsx`);
     } catch (error) {
         console.log('Caught Error!')
-        console.log(error.toString());
+        console.log((error as Error).toString());
     }
 }
 
