@@ -1,4 +1,5 @@
 import { ValidatedData, UploadedFile, ErrorSelected, UploadMetadata } from './types';
+import {public_key} from "./helpers/postcodeSignature";
 
 export async function handleUploaded903Data(uploadedFiles: Array<UploadedFile>, selectedErrors: Array<ErrorSelected>, metadata: UploadMetadata): Promise<[ValidatedData, Array<any>]> {
   const pyodide = window.pyodide;
@@ -58,12 +59,30 @@ export async function loadPyodide() {
     await window.pyodide.loadPackage(['micropip']);
     console.log('Loaded pyodide, now loading custom library...');
 
+    window.pyodide.globals.set("pc_pubkey", public_key);
     await window.pyodide.runPythonAsync(`
-      import logging
-      logging.basicConfig(level=logging.DEBUG)
-      
+      import os
+      os.environ["QLACREF_PC_KEY"] = pc_pubkey
+    `);
+
+    if (process.env.REACT_APP_MICROPIP_MODULES) {
+      const extra_modules = process.env.REACT_APP_MICROPIP_MODULES.split(" ")
+      window.pyodide.globals.set("micropip_extra_modules", extra_modules);
+    }
+
+    await window.pyodide.runPythonAsync(`
       import micropip
-      await micropip.install('quality-lac-data-validator')
+      import logging
+      logging.basicConfig(level=logging.INFO)
+     
+      await micropip.install('quality-lac-data-validator==0.2.0a1')
+
+      try:
+        for mod in micropip_extra_modules:
+          print(f"Loading extra module from: {mod}")
+          await micropip.install(mod)
+      except NameError:
+        pass
     `);
     console.log('Loaded custom libary.');
   } else {
