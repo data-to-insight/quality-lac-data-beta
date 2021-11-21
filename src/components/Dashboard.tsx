@@ -4,12 +4,18 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { handleUploaded903Data, loadErrorDefinitions, loadPyodide } from '../api';
 import Validator from "./Validator";
 import Uploader from "./Uploader";
-import { ErrorSelected, UploadedFile, UploadedFilesCallback, UploadMetadata, ValidatedData } from '../types';
-import laData from '../data/la_data.json';
+import {
+  ErrorSelected,
+  UploadedFile,
+  UploadedFilesCallback,
+  UploadMetadata,
+  ValidatedData
+} from '../types';
 import { useMemo } from 'react';
 import {
   saveErrorSummary,
-} from "../helpers/report/ChildErrorReport";
+} from "../helpers/report/childErrorReport";
+import {laData} from "../helpers/authorityData";
 
 export default function Dashboard() {
   const [loadingText, setLoadingText] = useState("Loading Python initially (takes around 30 seconds)...");

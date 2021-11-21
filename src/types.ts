@@ -11,6 +11,14 @@ export type UploadMetadata = {
     collectionYear: string,
 }
 
+export type LaData = {
+    la_id: string,
+    la_name: string,
+}
+export type LaMap = {
+    [key: string]: LaData
+}
+
 /** Used for individual data rows */
 export type DataRow = Map<string, Object>;
 
