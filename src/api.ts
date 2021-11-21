@@ -16,9 +16,6 @@ export async function handleUploaded903Data(uploadedFiles: Array<UploadedFile>, 
         from validator903.config import errors as configured_errors
         from dataclasses import asdict
         
-        import os
-        os.environ['QLAC_DISABLE_PC'] = 'True'
-
         validator = Validator(metadata.to_py(), uploaded_files.to_py())
         result = validator.validate(error_codes.to_py())
         print("Finished Validating")
