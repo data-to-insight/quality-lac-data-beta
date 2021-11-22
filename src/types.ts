@@ -9,7 +9,14 @@ export type UploadedFile = {name: string, fileText: ArrayBuffer, description: st
 export type UploadMetadata = {
     localAuthority: string,
     collectionYear: string,
-    postcodes: Uint8Array,
+}
+
+export type LaData = {
+    la_id: string,
+    la_name: string,
+}
+export type LaMap = {
+    [key: string]: LaData
 }
 
 /** Used for individual data rows */

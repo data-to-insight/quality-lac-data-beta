@@ -1,15 +1,21 @@
 import * as GovUK from 'govuk-react';
 import { Spinner } from '@govuk-react/icons';
 import React, { useCallback, useEffect, useState } from 'react';
-import { saveAs } from 'file-saver';
-import { handleUploaded903Data, loadErrorDefinitions, loadPyodide } from './../api';
+import { handleUploaded903Data, loadErrorDefinitions, loadPyodide } from '../api';
 import Validator from "./Validator";
 import Uploader from "./Uploader";
-import { ErrorSelected, UploadedFile, UploadedFilesCallback, UploadMetadata, ValidatedData } from '../types';
-import { childColumnName } from '../config';
-import laData from '../data/la_data.json';
+import {
+  ErrorSelected,
+  UploadedFile,
+  UploadedFilesCallback,
+  UploadMetadata,
+  ValidatedData
+} from '../types';
 import { useMemo } from 'react';
-import usePostcodes from "../hooks/usePostcodes";
+import {
+  saveErrorSummary,
+} from "../helpers/report/childErrorReport";
+import {laData} from "../helpers/authorityData";
 
 export default function Dashboard() {
   const [loadingText, setLoadingText] = useState("Loading Python initially (takes around 30 seconds)...");
@@ -18,7 +24,6 @@ export default function Dashboard() {
   const [validatedData, setValidatedData] = useState<ValidatedData | null>();
   const [selectedErrors, setSelectedErrors] = useState<Array<ErrorSelected>>([]);
   const [localAuthority, setLocalAuthority] = useState<string>(laData[0].la_id);
-  const postcodes = usePostcodes();
 
   const collectionYears = useMemo(() => getCollectionYears(5), []);
   const [collectionYear, setCollectionYear] = useState<string>(collectionYears[0]);
@@ -46,10 +51,9 @@ export default function Dashboard() {
   const runValidation = useCallback(async () => {
     setUploadErrors([]);
     setLoadingText("Loading postcode file (initial load takes 60 seconds)...");
-    let metadata: UploadMetadata = {
+    const metadata: UploadMetadata = {
       localAuthority: localAuthority as string,
       collectionYear: collectionYear,
-      postcodes: postcodes,
     }
     setLoadingText("Running validation...")
     let [newValidatedData, pythonErrors] = await handleUploaded903Data(fileContents, selectedErrors, metadata);
@@ -60,38 +64,20 @@ export default function Dashboard() {
       setUploadErrors(pythonErrors)
     }
     setLoadingText("");
-  }, [fileContents, selectedErrors, clearAndRestart, localAuthority, collectionYear, postcodes])
+  }, [fileContents, selectedErrors, clearAndRestart, localAuthority, collectionYear])
 
-  const downloadCSVs = useCallback(() => {
-    let childSummaryRows = [["ChildID", "ErrorCode", "ErrorDescription", "ErrorFields"]];
-    let errorCountRows = [['ErrorCode', 'ErrorDescription', 'NumErrors']];
-    let errorCounts = new Map();
-    validatedData?.data.forEach((table, tableName) => {
-      let errors = validatedData.errors.get(tableName);
-      table.forEach(dataRow => {
-        let index = dataRow.get('Index') as number;
-        let child = dataRow.get(childColumnName) as string;
-        let errorList = errors?.get(index);
-        errorList?.forEach(errorCode => {
-          let errorDefn = validatedData.errorDefinitions.get(errorCode) as Map<string, any>;
-          let errorFields = errorDefn?.get('affected_fields')?.toString();
-          childSummaryRows.push([`"${child}"`, `"${errorCode}"`, `"${errorDefn?.get("description") as string}"`,
-            `"${errorFields as string}"`]);
-
-          errorCounts.set(errorCode, errorCounts.has(errorCode) ? errorCounts.get(errorCode) + 1 : 1)
-        })
+  const downloadCSVs = useCallback( () => {
+    if (validatedData) {
+      Promise.all([
+        saveErrorSummary('ErrorCounts'),
+        saveErrorSummary('ChildErrorSummary'),
+      ]).then(() => {
+        console.log("Export completed")
+      }).catch(() => {
+        console.error("Export failed")
       })
-    })
+    }
 
-    errorCounts.forEach((numErrors, errorCode) => {
-      errorCountRows.push([`"${errorCode}"`, `"${validatedData?.errorDefinitions.get(errorCode)?.get('description')}"`, `${numErrors}`]);
-    })
-
-    let childErrorContent = new Blob([childSummaryRows.map(r => r.join(",")).join('\n')], {type: 'text/csv'});
-    saveAs(childErrorContent, 'ChildErrorSummary.csv');
-
-    let errorSummaryContent = new Blob([errorCountRows.map(r => r.join(",")).join('\n')], {type: 'text/csv'});
-    saveAs(errorSummaryContent, 'ErrorCounts.csv');
 
   }, [validatedData])
 

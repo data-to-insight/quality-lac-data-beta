@@ -1,5 +1,5 @@
-import libraryWheel from './python/903_Validator-0.1.0-py3-none-any.whl'
 import { ValidatedData, UploadedFile, ErrorSelected, UploadMetadata } from './types';
+import {public_key} from "./helpers/postcodeSignature";
 
 export async function handleUploaded903Data(uploadedFiles: Array<UploadedFile>, selectedErrors: Array<ErrorSelected>, metadata: UploadMetadata): Promise<[ValidatedData, Array<any>]> {
   const pyodide = window.pyodide;
@@ -12,13 +12,35 @@ export async function handleUploaded903Data(uploadedFiles: Array<UploadedFile>, 
   let uploadErrors = [];
   try {
       await pyodide.runPythonAsync(`
-        js_files, errors, error_definitions = run_validation_for_javascript(uploaded_files.to_py(), error_codes=error_codes.to_py(), metadata=metadata.to_py())
+        from validator903.validator import Validator
+        from validator903.report import Report
+        from validator903.config import errors as configured_errors
+        from dataclasses import asdict
+        
+        validator = Validator(metadata.to_py(), uploaded_files.to_py())
+        result = validator.validate(error_codes.to_py())
+        print("Finished Validating")
+        
+        report = Report(result)
+        print("Created report")
+        
+        cr = report.child_report
+        print("Child report generated")
+        
+        js_files = {k: [t._asdict() for t in df.itertuples(index=True)] for k, df in validator.dfs.items()}
+        
+        error_definitions = {code: asdict(definition[0]) for code, definition in configured_errors.items()}
+
+        errors = {}
+        for row in report.child_report.itertuples():
+            errors.setdefault(row.Table, {}).setdefault(row.RowID, []).append(row.Code)
+                
       `);
   } catch (error) {
       console.log('Caught Error!')
-      console.log(error.toString());
+      console.log((error as Error).toString());
       // We need to take the second to last line to get the exception text.
-      const errorLines = error.toString().split('\n')
+      const errorLines = (error as Error).toString().split('\n')
       uploadErrors.push(errorLines[errorLines.length - 2]);
   }
 
@@ -37,11 +59,30 @@ export async function loadPyodide() {
     await window.pyodide.loadPackage(['micropip']);
     console.log('Loaded pyodide, now loading custom library...');
 
-    window.pyodide.globals.set("validator_library_path", libraryWheel);
+    window.pyodide.globals.set("pc_pubkey", public_key);
+    await window.pyodide.runPythonAsync(`
+      import os
+      os.environ["QLACREF_PC_KEY"] = pc_pubkey
+    `);
+
+    if (process.env.REACT_APP_MICROPIP_MODULES) {
+      const extra_modules = process.env.REACT_APP_MICROPIP_MODULES.split(" ")
+      window.pyodide.globals.set("micropip_extra_modules", extra_modules);
+    }
+
     await window.pyodide.runPythonAsync(`
       import micropip
-      await micropip.install(validator_library_path)
-      from validator903 import *
+      import logging
+      logging.basicConfig(level=logging.INFO)
+     
+      await micropip.install('quality-lac-data-validator==0.2.0a1')
+
+      try:
+        for mod in micropip_extra_modules:
+          print(f"Loading extra module from: {mod}")
+          await micropip.install(mod)
+      except NameError:
+        pass
     `);
     console.log('Loaded custom libary.');
   } else {
@@ -52,11 +93,11 @@ export async function loadPyodide() {
 export async function loadErrorDefinitions(): Promise<Array<ErrorSelected>> {
   const pyodide = window.pyodide;
   await pyodide.runPythonAsync(`
-    all_error_definitions = get_error_definitions_list()
+    from validator903.config import errors as configured_errors
+    all_error_definitions = [definition[0] for definition in configured_errors.values()]
   `);
 
   let errorDefinitionsPy: any = window.pyodide.globals.get("all_error_definitions");
-
   let errorDefinitions: Array<ErrorSelected> = [];
   for (let error of errorDefinitionsPy) {
     errorDefinitions.push({

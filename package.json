@@ -4,17 +4,14 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.11.4",
-    "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^11.2.7",
-    "@testing-library/user-event": "^12.8.3",
     "@types/file-saver": "^2.0.3",
     "@types/react": "^17.0.13",
     "@types/react-dom": "^17.0.8",
-    "danfojs": "^0.2.7",
-    "dexie": "^3.0.3",
+    "dayjs": "^1.10.7",
     "file-saver": "^2.0.5",
     "govuk-react": "^0.9.0",
     "normalize.css": "^8.0.1",
+    "quality-lac-data-ref-authorities": "github:SocialFinanceDigitalLabs/quality-lac-data-ref-authorities",
     "react": "^17.0.2",
     "react-debounce-input": "^3.2.3",
     "react-dom": "^17.0.2",
@@ -51,9 +48,12 @@
   "devDependencies": {
     "@types/react-router-dom": "^5.1.7",
     "@types/styled-components": "^5.1.10",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/user-event": "^12.8.3",
     "source-map-loader": "^3.0.0",
     "ts-loader": "^9.2.3",
-    "typescript": "^4.3.5"
+    "typescript": ">=4.3.5 <4.5.0"
   },
   "engines": {
     "npm": "7.x"
