@@ -24,6 +24,8 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - name: Install and Build 🔧
+        env:
+          REACT_APP_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
         run: |
           yarn install --frozen-lockfile
           PUBLIC_URL="/quality-lac-data-beta/" yarn build
