@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.js": "/quality-lac-data-beta/static/js/main.937a0a06.chunk.js",
-    "main.js.map": "/quality-lac-data-beta/static/js/main.937a0a06.chunk.js.map",
+    "main.js": "/quality-lac-data-beta/static/js/main.949eabd3.chunk.js",
+    "main.js.map": "/quality-lac-data-beta/static/js/main.949eabd3.chunk.js.map",
     "runtime-main.js": "/quality-lac-data-beta/static/js/runtime-main.2ae08871.js",
     "runtime-main.js.map": "/quality-lac-data-beta/static/js/runtime-main.2ae08871.js.map",
     "static/css/2.679831fc.chunk.css": "/quality-lac-data-beta/static/css/2.679831fc.chunk.css",
-    "static/js/2.fc864ba8.chunk.js": "/quality-lac-data-beta/static/js/2.fc864ba8.chunk.js",
-    "static/js/2.fc864ba8.chunk.js.map": "/quality-lac-data-beta/static/js/2.fc864ba8.chunk.js.map",
+    "static/js/2.15d30934.chunk.js": "/quality-lac-data-beta/static/js/2.15d30934.chunk.js",
+    "static/js/2.15d30934.chunk.js.map": "/quality-lac-data-beta/static/js/2.15d30934.chunk.js.map",
     "index.html": "/quality-lac-data-beta/index.html",
     "static/css/2.679831fc.chunk.css.map": "/quality-lac-data-beta/static/css/2.679831fc.chunk.css.map",
-    "static/js/2.fc864ba8.chunk.js.LICENSE.txt": "/quality-lac-data-beta/static/js/2.fc864ba8.chunk.js.LICENSE.txt"
+    "static/js/2.15d30934.chunk.js.LICENSE.txt": "/quality-lac-data-beta/static/js/2.15d30934.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.2ae08871.js",
     "static/css/2.679831fc.chunk.css",
-    "static/js/2.fc864ba8.chunk.js",
-    "static/js/main.937a0a06.chunk.js"
+    "static/js/2.15d30934.chunk.js",
+    "static/js/main.949eabd3.chunk.js"
   ]
 }
