@@ -35,7 +35,7 @@ export default function DataTable({ rowData, highlight }: DataTableProps): React
     for (const [i, row] of rowData.entries()) {
       let row_elements = [];
       for (const [j, [rowHeader, r]] of Array.from(row.entries()).entries()) {
-        let highlighted = highlight.has(JSON.stringify([row.get("Index"), rowHeader]))
+        const highlighted = highlight && highlight.has(JSON.stringify([row.get("Index"), rowHeader]))
         row_elements.push(<GovUK.Table.Cell key={j} className={highlighted ? 'error' : null}>{Number.isNaN(r) || r === undefined ? '[null]' : r.toString()}</GovUK.Table.Cell>);
       }
       all_rows.push(<GovUK.Table.Row key={i}>{row_elements}</GovUK.Table.Row>);
