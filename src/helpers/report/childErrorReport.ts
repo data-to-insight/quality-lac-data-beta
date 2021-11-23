@@ -1,5 +1,6 @@
 import {saveAs} from "file-saver";
 import dayjs from "dayjs";
+import {captureException} from "../sentry";
 
 export const saveErrorSummary = async (report_type: string) => {
     const time = dayjs().format('YYYYMMDD-HHmmss')
@@ -13,8 +14,9 @@ export const saveErrorSummary = async (report_type: string) => {
         report.destroy()
         saveAs(errorSummaryContent, `${report_type}-${time}.csv`);
     } catch (error) {
-        console.log('Caught Error!')
-        console.log((error as Error).toString());
+        console.error('Caught Error!', error)
+        const pythonError = (error as Error).toString()
+        captureException(error, {pythonError})
     }
 }
 
@@ -30,8 +32,9 @@ export const saveExcelSummary = async () => {
         report_data.destroy()
         saveAs(errorSummaryContent, `ErrorReport-${time}.xlsx`);
     } catch (error) {
-        console.log('Caught Error!')
-        console.log((error as Error).toString());
+        console.error('Caught Error!', error)
+        const pythonError = (error as Error).toString()
+        captureException(error, {pythonError})
     }
 }
 
