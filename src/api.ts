@@ -1,5 +1,6 @@
 import { ValidatedData, UploadedFile, ErrorSelected, UploadMetadata } from './types';
 import {public_key} from "./helpers/postcodeSignature";
+import {captureException} from "./helpers/sentry";
 
 export async function handleUploaded903Data(uploadedFiles: Array<UploadedFile>, selectedErrors: Array<ErrorSelected>, metadata: UploadMetadata): Promise<[ValidatedData, Array<any>]> {
   const pyodide = window.pyodide;
@@ -37,10 +38,10 @@ export async function handleUploaded903Data(uploadedFiles: Array<UploadedFile>, 
                 
       `);
   } catch (error) {
-      console.log('Caught Error!')
-      console.log((error as Error).toString());
-      // We need to take the second to last line to get the exception text.
-      const errorLines = (error as Error).toString().split('\n')
+      console.error('Caught Error!', error)
+      const pythonError = (error as Error).toString()
+      captureException(error, {pythonError})
+      const errorLines = pythonError.split('\n') // We need to take the second to last line to get the exception text.
       uploadErrors.push(errorLines[errorLines.length - 2]);
   }
 

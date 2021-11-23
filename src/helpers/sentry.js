@@ -17,3 +17,10 @@ export const init = () => {
         console.error("Failed to initialise Sentry")
     }
 }
+
+export const captureException = (err, context) => {
+    try {
+        Sentry.captureException(err, context);
+    } catch {
+    }
+}
