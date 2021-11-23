@@ -75,7 +75,7 @@ export async function loadPyodide() {
       import logging
       logging.basicConfig(level=logging.INFO)
      
-      await micropip.install('quality-lac-data-validator==0.2.0a1')
+      await micropip.install('${process.env.REACT_APP_VALIDATOR_RELEASE}')
 
       try:
         for mod in micropip_extra_modules:
