@@ -16,6 +16,7 @@ import {
   saveErrorSummary,
 } from "../helpers/report/childErrorReport";
 import {laData} from "../helpers/authorityData";
+import {event} from "../helpers/googleAnalytics";
 
 export default function Dashboard() {
   const [loadingText, setLoadingText] = useState("Loading Python initially (takes around 30 seconds)...");
@@ -31,6 +32,7 @@ export default function Dashboard() {
   useEffect(() => {
     (async () => {
       await loadPyodide();
+      event('pyodide', 'loaded')
       let selectedErrors = await loadErrorDefinitions();
       setSelectedErrors(selectedErrors);
       setLoadingText("");
@@ -38,17 +40,20 @@ export default function Dashboard() {
   }, [])
 
   const addFileContent = useCallback<UploadedFilesCallback>(uploadedFile => {
+    event('click', 'addFile')
     fileContents.push(uploadedFile); // We have to push to the old state in case the callback isn't updated in children
     setFileContents([...fileContents]);
   }, [fileContents])
 
   const clearAndRestart = useCallback(() => {
+    event('click', 'clear')
     setUploadErrors([]);
     setValidatedData(null);
     setFileContents([]);
   }, [])
 
   const runValidation = useCallback(async () => {
+    event('click', 'validate')
     setUploadErrors([]);
     setLoadingText("Loading postcode file (initial load takes 60 seconds)...");
     const metadata: UploadMetadata = {
@@ -66,16 +71,11 @@ export default function Dashboard() {
     setLoadingText("");
   }, [fileContents, selectedErrors, clearAndRestart, localAuthority, collectionYear])
 
-  const downloadCSVs = useCallback( () => {
+  const downloadCSVs = useCallback( async () => {
+    event('click', 'download')
     if (validatedData) {
-      Promise.all([
-        saveErrorSummary('ErrorCounts'),
-        saveErrorSummary('ChildErrorSummary'),
-      ]).then(() => {
-        console.log("Export completed")
-      }).catch(() => {
-        console.error("Export failed")
-      })
+        await saveErrorSummary('ErrorCounts');
+        await saveErrorSummary('ChildErrorSummary');
     }
 
 
@@ -110,13 +110,17 @@ export default function Dashboard() {
 
     // Only set this if its present (i.e. fail if our LA list has changed)
     if (storedValue && laData.some(la => la.la_id === storedValue)) {
+      const la = laData.find(la => la.la_id === storedValue);
+      event('la_select', 'localStore', la?.la_name || storedValue);
       setLocalAuthority(storedValue);
     }
   }, [setLocalAuthority])
 
-  const changeLocalAuthority = useCallback(event => {
-    setLocalAuthority(event.target.value);
-    window.localStorage.setItem('localAuthority', event.target.value);
+  const changeLocalAuthority = useCallback(ev => {
+    const la = laData.find(la => la.la_id === ev.target.value);
+    event('la_select', 'user', la?.la_name || ev.target.value);
+    setLocalAuthority(ev.target.value);
+    window.localStorage.setItem('localAuthority', ev.target.value);
   }, [setLocalAuthority]);
 
 

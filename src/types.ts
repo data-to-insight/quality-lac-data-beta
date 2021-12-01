@@ -56,5 +56,7 @@ declare global {
     interface Window {
         pyodide: any,
         loadPyodide: any,
+        dataLayer: any,
+        gtag: any,
     }
 };
