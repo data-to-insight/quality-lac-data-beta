@@ -133,9 +133,14 @@ export default function Dashboard() {
         <GovUK.Select input={{value: collectionYear, onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCollectionYear(e.target.value)}} label='Collection Year' mb={4}>
           {collectionYears.map(collectionYear => <option key={collectionYear} value={collectionYear}>{collectionYear}</option>)}
         </GovUK.Select>
+
         <GovUK.Select input={{value: localAuthority ? localAuthority : undefined, onChange: changeLocalAuthority}} label='Local Authority' mb={4}>
           {laData.map(({la_id, la_name}) => <option key={la_id} value={la_id}>{la_name}</option>)}
         </GovUK.Select>
+        <GovUK.Paragraph>
+          We ask you to select your Local Authority to enable proper postcode validation within the tool, and to allow us to count how many distinct LAs have used the tool. We never name LAs in this aggregate reporting.
+        </GovUK.Paragraph>
+
       </>
     }
 
@@ -155,8 +160,8 @@ export default function Dashboard() {
       </div>
       <div style={{marginRight: '10%', display: 'inline'}}>
         {validatedData
-          ? <GovUK.Button onClick={downloadCSVs}>Download CSVs</GovUK.Button>
-          : <GovUK.Button buttonColour='gray' disabled>Download CSVs</GovUK.Button>
+          ? <GovUK.Button onClick={downloadCSVs}>Download Error Reports</GovUK.Button>
+          : <GovUK.Button buttonColour='gray' disabled>Download Error Reports</GovUK.Button>
         }
       </div>
     </LoadingBox>

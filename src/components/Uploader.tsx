@@ -47,19 +47,53 @@ export default function Uploader({ currentFiles, addFileContent, uploadErrors, s
   return (
     <UploaderStyles>
       <GovUK.Paragraph>
-        This tool will not send data to any third party. It uses the browser as an application to locate files in your computer and run scripts
-        on them to identify errors. Once the browser is loaded, you can locate the files and run the validation offline.
-      </GovUK.Paragraph>
-      
+        This tool will not send loaded data to any third party. It uses the browser as an application to locate files in your computer and run scripts
+        on them to identify errors, as defined in the 2021 to 2022 SSDA903 Validation Checks specification. Once the browser is loaded, you can locate the files and run the validation offline.
+      </ GovUK.Paragraph>
+      <GovUK.Details summary="Instructions">
+      <b>1.</b> Add your files to the loading boxes below. If using CSV's, you can validate with any or all of the tables, but validation checks which are missing the necessary data will not run.<br /><br />
+      <b>2.</b> Select your Local Authority and the relevant Collection Year.<br /><br />
+      <b>3.</b> If you only want to only run the validation for certain rules, use the Validation Rules dropdown to select the ones you want.<br /><br />
+      <b>4.</b> Click <b>'Validate'</b> to run the selected checks. When complete, the Error Display screen will appear.<br /><br />
+      <b>5.</b> On the Error Display screen:
+      <ul>
+          <li> Use the <b>'Child ID'</b> sidebar to select individual children. </li>
+          <li> Use the tabs to see the selected Child ID's data in a particular module. Cells with errors are highlighted in red. </li>
+          <li> If you click the <b>'Filter'</b> button, you can type to search for a Child ID, or scroll down and click to display only children with a particular error. </li>
+          <li> To download the Error Report spreadsheet, scroll to the bottom of the page and click the <b>'Download Error Reports'</b> button</li>
+      </ul>
+      </ GovUK.Details>
       <GovUK.Tabs>
         <GovUK.Tabs.Title>Locate</GovUK.Tabs.Title>
         <GovUK.Tabs.List>
           <GovUK.Tabs.Tab onClick={() => setFileMode('csv')} selected={fileMode === 'csv'} 
             className={fileMode !== 'csv' && currentFiles.length > 0 ? 'disabledMode' : null}>CSV Files</GovUK.Tabs.Tab>
           <GovUK.Tabs.Tab onClick={() => setFileMode('xml')} selected={fileMode === 'xml'}
-            className={fileMode !== 'xml' && currentFiles.length > 0 ? 'disabledMode' : null}>XML Files</GovUK.Tabs.Tab>
+            className={fileMode !== 'xml' && currentFiles.length > 0 ? 'disabledMode' : null}>XML Files (Experimental)</GovUK.Tabs.Tab>
         </GovUK.Tabs.List>
         <GovUK.Tabs.Panel selected={fileMode === 'csv'}>
+          <GovUK.Details summary="Show required CSV headers">
+            <b>Header:</b> <br />CHILD,SEX,DOB,ETHNIC,UPN,MOTHER,MC_DOB
+            <br /><br />
+            <b>Episodes:</b> <br /> CHILD,DECOM,RNE,LS,CIN,PLACE,PLACE_PROVIDER,DEC,REC,REASON_PLACE_CHANGE,HOME_POST,PL_POST,URN
+            <br /><br />
+            <b>UASC:</b><br />  CHILD,SEX,DOB,DUC
+            <br /><br />
+            <b>Outcomes (OC2):</b><br /> CHILD,DOB,SDQ_SCORE,SDQ_REASON,CONVICTED,HEALTH_CHECK,IMMUNISATIONS,TEETH_CHECK,HEALTH_ASSESSMENT,SUBSTANCE_MISUSE,INTERVENTION_RECEIVED,INTERVENTION_OFFERED
+            <br /><br />
+            <b>Adoption (AD1):</b><br />  CHILD,DOB,DATE_INT,DATE_MATCH,FOSTER_CARE,NB_ADOPTR,SEX_ADOPTR,LS_ADOPTR
+            <br /><br />
+            <b>Should be Placed for Adoption:</b><br />  CHILD,DOB,DATE_PLACED,DATE_PLACED_CEASED,REASON_PLACED_CEASED
+            <br /><br />
+            <b>Care Leavers (OC3): </b><br /> CHILD,DOB,IN_TOUCH,ACTIV,ACCOM
+            <br /><br />
+            <b>Reviews:</b><br />  CHILD,DOB,REVIEW,REVIEW_CODE
+            <br /><br />
+            <b>Previous Permanence:</b> <br /> CHILD,DOB,PREV_PERM,LA_PERM,DATE_PERM
+            <br /><br />
+            <b>Missing:</b><br />  CHILD,DOB,MISSING,MIS_START,MIS_END
+          </GovUK.Details>
+
           <GovUK.GridRow>
             <GovUK.GridCol>
               <GovUK.H6>This year</GovUK.H6>
