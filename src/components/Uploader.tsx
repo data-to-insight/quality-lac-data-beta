@@ -75,9 +75,6 @@ export default function Uploader({ currentFiles, addFileContent, uploadErrors, s
         </GovUK.Tabs.List>
         <GovUK.Tabs.Panel selected={fileMode === 'csv'}>
           <GovUK.Details summary="Show column headers required for each CSV file">
-             <GovUK.Paragraph>
-               The
-             </ GovUK.Paragraph>
             <b>Header:</b> <br />CHILD,SEX,DOB,ETHNIC,UPN,MOTHER,MC_DOB
             <br /><br />
             <b>Episodes:</b> <br /> CHILD,DECOM,RNE,LS,CIN,PLACE,PLACE_PROVIDER,DEC,REC,REASON_PLACE_CHANGE,HOME_POST,PL_POST,URN
