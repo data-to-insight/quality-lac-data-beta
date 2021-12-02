@@ -48,12 +48,14 @@ export default function Uploader({ currentFiles, addFileContent, uploadErrors, s
     <UploaderStyles>
       <GovUK.Paragraph>
         This tool will load Python code in your web browser to read and validate your SSDA903 data files locally. None of your SSDA903 data will leave your network via this tool. You can safely use it without installing additional software, and without any data sharing agreement. Once the Python code has loaded, the tool will work entirely offline.
+      </ GovUK.Paragraph>
+      <GovUK.Paragraph>
         To begin, use the boxes below to locate your local SSDA903 file outputs for the relevant year. Choose which validation rules you want to run, and use the “Validate” button to get started.
-        </ GovUK.Paragraph>
+      </ GovUK.Paragraph>
       <GovUK.Details summary="Instructions">
       <b>1.</b> Add your files to the loading boxes below. If using CSV's, you can validate with any or all of the tables, but validation checks which are missing the necessary data will not run.<br /><br />
       <b>2.</b> Select your Local Authority and the relevant Collection Year.<br /><br />
-      <b>3.</b> If you only want to only run the validation for certain rules, use the Validation Rules dropdown to select the ones you want.<br /><br />
+      <b>3.</b> If you only want to only run the validation for certain rules, use the <b>'Validation Rules'</b> dropdown to select the ones you want.<br /><br />
       <b>4.</b> Click <b>'Validate'</b> to run the selected checks. When complete, the Error Display screen will appear.<br /><br />
       <b>5.</b> On the Error Display screen:
       <ul>
@@ -72,7 +74,10 @@ export default function Uploader({ currentFiles, addFileContent, uploadErrors, s
             className={fileMode !== 'xml' && currentFiles.length > 0 ? 'disabledMode' : null}>XML Files (Experimental)</GovUK.Tabs.Tab>
         </GovUK.Tabs.List>
         <GovUK.Tabs.Panel selected={fileMode === 'csv'}>
-          <GovUK.Details summary="Show required CSV headers">
+          <GovUK.Details summary="Show column headers required for each CSV file">
+             <GovUK.Paragraph>
+               The
+             </ GovUK.Paragraph>
             <b>Header:</b> <br />CHILD,SEX,DOB,ETHNIC,UPN,MOTHER,MC_DOB
             <br /><br />
             <b>Episodes:</b> <br /> CHILD,DECOM,RNE,LS,CIN,PLACE,PLACE_PROVIDER,DEC,REC,REASON_PLACE_CHANGE,HOME_POST,PL_POST,URN
