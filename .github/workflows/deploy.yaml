@@ -29,6 +29,7 @@ jobs:
           REACT_APP_GA_MEASUREMENT_ID: ${{ secrets.GA_MEASUREMENT_ID }}
         run: |
           yarn install --frozen-lockfile
+          yarn build
 
       - name: Deploy 🚀
         if: github.ref == 'refs/heads/main'
