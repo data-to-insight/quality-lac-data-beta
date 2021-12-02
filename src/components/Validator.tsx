@@ -141,7 +141,7 @@ export default function Validator({ validatedData }: ValidatorProps) {
             {childErrors.length > 0
               ? (
                 <>
-                <GovUK.H4>Errors</GovUK.H4>
+                <GovUK.H4>Errors</ GovUK.H4>
                 <GovUK.UnorderedList style={{fontSize: '1em'}}>
                   {childErrors}
                 </GovUK.UnorderedList>
