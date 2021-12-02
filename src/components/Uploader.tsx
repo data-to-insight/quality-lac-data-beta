@@ -47,9 +47,9 @@ export default function Uploader({ currentFiles, addFileContent, uploadErrors, s
   return (
     <UploaderStyles>
       <GovUK.Paragraph>
-        This tool will not send loaded data to any third party. It uses the browser as an application to locate files in your computer and run scripts
-        on them to identify errors, as defined in the 2021 to 2022 SSDA903 Validation Checks specification. Once the browser is loaded, you can locate the files and run the validation offline.
-      </ GovUK.Paragraph>
+        This tool will load Python code in your web browser to read and validate your SSDA903 data files locally. None of your SSDA903 data will leave your network via this tool. You can safely use it without installing additional software, and without any data sharing agreement. Once the Python code has loaded, the tool will work entirely offline.
+        To begin, use the boxes below to locate your local SSDA903 file outputs for the relevant year. Choose which validation rules you want to run, and use the “Validate” button to get started.
+        </ GovUK.Paragraph>
       <GovUK.Details summary="Instructions">
       <b>1.</b> Add your files to the loading boxes below. If using CSV's, you can validate with any or all of the tables, but validation checks which are missing the necessary data will not run.<br /><br />
       <b>2.</b> Select your Local Authority and the relevant Collection Year.<br /><br />
