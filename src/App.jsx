@@ -33,7 +33,7 @@ function Start() {
       Start
     </GovUK.Button>
 
-    <GovUK.Details summary="Version log">
+    <GovUK.Details summary="Release Notes">
         <u><b>Version 0.1.1</b></u>
         <p></p>
         <p>This is an early release which implements the SSDA 903 validation checks for the 2021 to 2022 return as described in <a href='https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1023549/CLA_SSDA903_2021-22_Validation_rules_Version_1.2.pdf'>this document</a>.</p>
