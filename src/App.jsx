@@ -32,6 +32,28 @@ function Start() {
     <GovUK.Button start as={Link} to="/application">
       Start
     </GovUK.Button>
+
+    <GovUK.Details summary="Version log">
+        <u><b>Version 0.1.1</b></u>
+        <p></p>
+        <p>This is an early release which implements the SSDA 903 validation checks for the 2021 to 2022 return as described in <a href='https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1023549/CLA_SSDA903_2021-22_Validation_rules_Version_1.2.pdf'>this document</a>.</p>
+        <p>It currently contains all 'Stage 1' rules except:
+        <ul>
+        <li>rule 1008, which requires a URN lookup table (will be added in future release)</li>
+        <li>rules 105, 205A-D & 330, which rely on the XML specification (will be added in future release)</li>
+        <li>rules 1000, 1001, 1002, 1008, 199 which require historical data held on the DfE system (will be added in future release, with the caveat of potential false positives/negatives, since this tool only accepts up to 2 years of data)</li>
+        </ul></p>
+        <p>141 of 184 'Stage 2' Rules are currently implemented, with the rest to be added over the coming weeks.</p>
+        <p>Planned features also include:
+        <ul>
+          <li>Full XML support</li>
+          <li>All URN-related validation checks</li>
+          <li>UI enhancements</li>
+          <li>Preliminary data integrity checks</li>
+        </ul>
+        </p>
+    </GovUK.Details>
+
     </>
   )
 }

@@ -108,6 +108,12 @@ export default function Uploader({ currentFiles, addFileContent, uploadErrors, s
           </GovUK.GridRow>
         </GovUK.Tabs.Panel>
         <GovUK.Tabs.Panel selected={fileMode === 'xml'}>
+          <GovUK.Paragraph>
+             There are known issues with XML loading at present; this may or may not work depending on the structure of your file.
+          </GovUK.Paragraph>
+          <GovUK.Paragraph>
+             Please report any issues using the link at the top of this page.
+          </GovUK.Paragraph>
           <GovUK.GridRow>
             <GovUK.GridCol>
               <GovUK.H6>This year</GovUK.H6>
