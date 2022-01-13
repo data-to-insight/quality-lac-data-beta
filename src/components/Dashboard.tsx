@@ -13,7 +13,7 @@ import {
 } from '../types';
 import { useMemo } from 'react';
 import {
-  saveErrorSummary,
+  saveErrorSummary, saveLoadedFiles,
 } from "../helpers/report/childErrorReport";
 import {laData} from "../helpers/authorityData";
 import {event} from "../helpers/googleAnalytics";
@@ -76,6 +76,16 @@ export default function Dashboard() {
     if (validatedData) {
         await saveErrorSummary('ErrorCounts');
         await saveErrorSummary('ChildErrorSummary');
+    }
+
+
+  }, [validatedData])
+
+  const downloadLoadedCSVs = useCallback( async () => {
+    event('click', 'download')
+    if (validatedData) {
+        await saveLoadedFiles('Header');
+        await saveLoadedFiles('Episodes');
     }
 
 
