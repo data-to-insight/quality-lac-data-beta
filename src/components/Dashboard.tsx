@@ -174,6 +174,12 @@ export default function Dashboard() {
           : <GovUK.Button buttonColour='gray' disabled>Download Error Reports</GovUK.Button>
         }
       </div>
+      <div style={{marginRight: '10%', display: 'inline'}}>
+        {validatedData
+          ? <GovUK.Button onClick={downloadLoadedCSVs}>Download 903 CSVs</GovUK.Button>
+          : <GovUK.Button buttonColour='gray' disabled>Download 903 CSVs</GovUK.Button>
+        }
+      </div>
     </LoadingBox>
     </>
   )
