@@ -34,7 +34,12 @@ function Start() {
     </GovUK.Button>
 
     <GovUK.Details summary="Release Notes">
-        <u><b>Version 0.1.1</b></u>
+        <u><b>Version 0.1.2  (18/01/2022)</b></u>
+        <p></p>
+        <p>Minor update containing various bug fixes and 4 more validation checks.</p>
+
+        <u><b>Version 0.1.1  (03/12/2021)</b></u>
+
         <p></p>
         <p>This is an early release which implements the SSDA 903 validation checks for the 2021 to 2022 return as described in <a href='https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1023549/CLA_SSDA903_2021-22_Validation_rules_Version_1.2.pdf'>this document</a>.</p>
         <p>It currently contains all 'Stage 1' rules except:
