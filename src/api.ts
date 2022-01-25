@@ -17,15 +17,9 @@ export async function handleUploaded903Data(uploadedFiles: Array<UploadedFile>, 
         from validator903.report import Report
         from validator903.config import errors as configured_errors
         from dataclasses import asdict
-        import logging
-
-        # logging things
-        logging.basicConfig(filename='log_results.log', level=logging.DEBUG)
-
+       
         validator = Validator(metadata.to_py(), uploaded_files.to_py())
         csv_string_dict = {key: df.to_csv(index=False) for key, df in validator.dfs.items() if key != 'metadata'}
-
-        logging.info(csv_string_dict.keys())
 
         result = validator.validate(error_codes.to_py())
         print("Finished Validating")
