@@ -42,11 +42,10 @@ export const saveLoadedFiles = async (table_name: string) => {
     const time = dayjs().format('YYYYMMDD-HHmmss')
     const pyodide = window.pyodide;
     try {
-        const csv_string_dict = pyodide.globals.get('csv_string_dict');
-        const csv_string = csv_string_dict[table_name]
+        const csv_string_dict = pyodide.globals.get('csv_string_dict').toJs();
+        const csv_string = csv_string_dict.get(table_name);
         let csvDownloadContent = new Blob([csv_string],
             {type: 'text/csv'});
-        csv_string_dict.destroy()
         saveAs(csvDownloadContent, `${table_name}-${time}.csv`);
     } catch (error) {
         console.error('Caught Error!', error)
