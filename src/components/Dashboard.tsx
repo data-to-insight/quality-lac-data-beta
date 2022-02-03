@@ -53,7 +53,8 @@ export default function Dashboard() {
   }, [])
 
   const runValidation = useCallback(async () => {
-    event('click', 'validate', window.localStorage.getItem('localAuthority');)
+    let storedValue = window.localStorage.getItem('localAuthority') || 'LA not set!';
+    event('click', 'validate', storedValue);
     setUploadErrors([]);
     setLoadingText("Loading postcode file (initial load takes 60 seconds)...");
     const metadata: UploadMetadata = {
