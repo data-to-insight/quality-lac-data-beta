@@ -86,6 +86,14 @@ export default function Dashboard() {
     if (validatedData) {
         await saveLoadedFiles('Header');
         await saveLoadedFiles('Episodes');
+        await saveLoadedFiles('UASC');
+        await saveLoadedFiles('OC2');
+        await saveLoadedFiles('OC3');
+        await saveLoadedFiles('AD1');
+        await saveLoadedFiles('Missing');
+        await saveLoadedFiles('Reviews');
+        await saveLoadedFiles('PlacedAdoption');
+        await saveLoadedFiles('PrevPerm');
     }
 
 
