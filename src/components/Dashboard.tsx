@@ -13,7 +13,7 @@ import {
 } from '../types';
 import { useMemo } from 'react';
 import {
-  saveErrorSummary,
+  saveErrorSummary, saveLoadedFiles,
 } from "../helpers/report/childErrorReport";
 import {laData} from "../helpers/authorityData";
 import {event} from "../helpers/googleAnalytics";
@@ -76,6 +76,24 @@ export default function Dashboard() {
     if (validatedData) {
         await saveErrorSummary('ErrorCounts');
         await saveErrorSummary('ChildErrorSummary');
+    }
+
+
+  }, [validatedData])
+
+  const downloadLoadedCSVs = useCallback( async () => {
+    event('click', 'download')
+    if (validatedData) {
+        await saveLoadedFiles('Header');
+        await saveLoadedFiles('Episodes');
+        await saveLoadedFiles('UASC');
+        await saveLoadedFiles('OC2');
+        await saveLoadedFiles('OC3');
+        await saveLoadedFiles('AD1');
+        await saveLoadedFiles('Missing');
+        await saveLoadedFiles('Reviews');
+        await saveLoadedFiles('PlacedAdoption');
+        await saveLoadedFiles('PrevPerm');
     }
 
 
@@ -162,6 +180,12 @@ export default function Dashboard() {
         {validatedData
           ? <GovUK.Button onClick={downloadCSVs}>Download Error Reports</GovUK.Button>
           : <GovUK.Button buttonColour='gray' disabled>Download Error Reports</GovUK.Button>
+        }
+      </div>
+      <div style={{marginRight: '10%', display: 'inline'}}>
+        {validatedData
+          ? <GovUK.Button onClick={downloadLoadedCSVs}>Download 903 CSVs</GovUK.Button>
+          : <GovUK.Button buttonColour='gray' disabled>Download 903 CSVs</GovUK.Button>
         }
       </div>
     </LoadingBox>

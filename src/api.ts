@@ -12,13 +12,15 @@ export async function handleUploaded903Data(uploadedFiles: Array<UploadedFile>, 
 
   let uploadErrors = [];
   try {
-      await pyodide.runPythonAsync(`
+      await pyodide.runPythonAsync(` 
         from validator903.validator import Validator
         from validator903.report import Report
         from validator903.config import errors as configured_errors
         from dataclasses import asdict
-        
+       
         validator = Validator(metadata.to_py(), uploaded_files.to_py())
+        csv_string_dict = {key: df.to_csv(index=False) for key, df in validator.dfs.items() if key != 'metadata'}
+
         result = validator.validate(error_codes.to_py())
         print("Finished Validating")
         
