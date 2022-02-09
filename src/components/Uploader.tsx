@@ -65,6 +65,29 @@ export default function Uploader({ currentFiles, addFileContent, uploadErrors, s
           <li> To download the Error Report spreadsheet, scroll to the bottom of the page and click the <b>'Download Error Reports'</b> button</li>
       </ul>
       </ GovUK.Details>
+      <GovUK.Details summary="Click to add provider lookup tables (Optional)">
+
+      <GovUK.GridRow>
+            <GovUK.GridCol setWidth="one-half">
+              <GovUK.H6>Children's Homes Lookup Table</GovUK.H6>
+              <DropzoneUploader description="CH lookup" onFiles={onFilesUploaded} accept='.xlsx' displayedFiles={currentFiles.filter(f => f.description === 'CH lookup')} />
+            </GovUK.GridCol>
+      </GovUK.GridRow><GovUK.GridRow>
+            <GovUK.GridCol setWidth="one-half">
+              <GovUK.H6>Social Care Providers Lookup Table</GovUK.H6>
+              <DropzoneUploader description="SCP lookup" onFiles={onFilesUploaded} accept='.xlsx' displayedFiles={currentFiles.filter(f => f.description === 'SCP lookup')} />
+            </GovUK.GridCol>
+            <GovUK.GridCol setWidth="one-half">
+                <GovUK.Paragraph>
+                    If you wish to perform the checks concerning providers' details such as URN, postcode, or
+                    placement code, add both Ofsted tables to their respective box to the left. You must provide
+                    both tables or the upload will fail.
+                </GovUK.Paragraph>
+
+            </GovUK.GridCol>
+          </GovUK.GridRow>
+          </GovUK.Details>
+          <br />
       <GovUK.Tabs>
         <GovUK.Tabs.Title>Locate</GovUK.Tabs.Title>
         <GovUK.Tabs.List>
