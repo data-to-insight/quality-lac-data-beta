@@ -70,12 +70,12 @@ export default function Uploader({ currentFiles, addFileContent, uploadErrors, s
       <GovUK.GridRow>
             <GovUK.GridCol setWidth="one-half">
               <GovUK.H6>Children's Homes Lookup Table</GovUK.H6>
-              <DropzoneUploader description="CH lookup" onFiles={onFilesUploaded} accept='.xlsx' displayedFiles={currentFiles.filter(f => f.description === 'CH lookup')} />
+              <DropzoneUploader description="CH lookup" onFiles={onFilesUploaded} accept='.xlsx,.xlsm,.xls' displayedFiles={currentFiles.filter(f => f.description === 'CH lookup')} />
             </GovUK.GridCol>
       </GovUK.GridRow><GovUK.GridRow>
             <GovUK.GridCol setWidth="one-half">
               <GovUK.H6>Social Care Providers Lookup Table</GovUK.H6>
-              <DropzoneUploader description="SCP lookup" onFiles={onFilesUploaded} accept='.xlsx' displayedFiles={currentFiles.filter(f => f.description === 'SCP lookup')} />
+              <DropzoneUploader description="SCP lookup" onFiles={onFilesUploaded} accept='.xlsx,.xlsm,.xls' displayedFiles={currentFiles.filter(f => f.description === 'SCP lookup')} />
             </GovUK.GridCol>
             <GovUK.GridCol setWidth="one-half">
                 <GovUK.Paragraph>
