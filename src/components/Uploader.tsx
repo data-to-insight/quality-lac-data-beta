@@ -65,29 +65,38 @@ export default function Uploader({ currentFiles, addFileContent, uploadErrors, s
           <li> To download the Error Report spreadsheet, scroll to the bottom of the page and click the <b>'Download Error Reports'</b> button</li>
       </ul>
       </ GovUK.Details>
-      <GovUK.Details summary="Click to add provider lookup tables (Optional)">
-
+      <GovUK.GridRow>
+           <GovUK.GridCol >
+                <GovUK.H3>Ofsted Provider Information Lookup Tables</GovUK.H3>
+           </GovUK.GridCol>
+      </GovUK.GridRow>
       <GovUK.GridRow>
             <GovUK.GridCol setWidth="one-half">
-              <GovUK.H6>Children's Homes Lookup Table</GovUK.H6>
-              <DropzoneUploader description="CH lookup" onFiles={onFilesUploaded} accept='.xlsx,.xlsm,.xls' displayedFiles={currentFiles.filter(f => f.description === 'CH lookup')} />
-            </GovUK.GridCol>
-      </GovUK.GridRow><GovUK.GridRow>
-            <GovUK.GridCol setWidth="one-half">
-              <GovUK.H6>Social Care Providers Lookup Table</GovUK.H6>
-              <DropzoneUploader description="SCP lookup" onFiles={onFilesUploaded} accept='.xlsx,.xlsm,.xls' displayedFiles={currentFiles.filter(f => f.description === 'SCP lookup')} />
-            </GovUK.GridCol>
-            <GovUK.GridCol setWidth="one-half">
-                <GovUK.Paragraph>
-                    If you wish to perform the checks concerning providers' details such as URN, postcode, or
-                    placement code, add both Ofsted tables to their respective box to the left. You must provide
-                    both tables or the upload will fail.
-                </GovUK.Paragraph>
-
+                <GovUK.H6>Children's Homes List</GovUK.H6>
+                <DropzoneUploader description="CH lookup" onFiles={onFilesUploaded} accept='.xlsx,.xlsm,.xls' displayedFiles={currentFiles.filter(f => f.description === 'CH lookup')} />
+           </GovUK.GridCol>
+           <GovUK.GridCol setWidth="one-half">
+                <GovUK.H6>Social Care Providers List</GovUK.H6>
+                <DropzoneUploader description="SCP lookup" onFiles={onFilesUploaded} accept='.xlsx,.xlsm,.xls' displayedFiles={currentFiles.filter(f => f.description === 'SCP lookup')} />
+           </GovUK.GridCol>
+        </GovUK.GridRow><GovUK.GridRow>
+            <GovUK.GridCol>
+                <GovUK.Paragraph />
+                <GovUK.Details summary="Help with adding provider info tables">
+                    <GovUK.Paragraph />
+                    <GovUK.Paragraph>
+                        If you wish to perform the checks concerning providers' details such as URN, postcode, or
+                        placement code, add both Ofsted tables to their respective box above.
+                    </GovUK.Paragraph><GovUK.Paragraph>
+                        You must provide both tables or the upload will fail.
+                    </GovUK.Paragraph><GovUK.Paragraph>
+                        Note that this will add up to five minutes to the processing time, as reading Excel documents in
+                        Pyodide can be very slow!
+                    </GovUK.Paragraph>
+                </GovUK.Details>
             </GovUK.GridCol>
           </GovUK.GridRow>
-          </GovUK.Details>
-          <br />
+          <GovUK.H3>SSDA903 Data</GovUK.H3>
       <GovUK.Tabs>
         <GovUK.Tabs.Title>Locate</GovUK.Tabs.Title>
         <GovUK.Tabs.List>
@@ -97,7 +106,7 @@ export default function Uploader({ currentFiles, addFileContent, uploadErrors, s
             className={fileMode !== 'xml' && currentFiles.length > 0 ? 'disabledMode' : null}>XML Files (Experimental)</GovUK.Tabs.Tab>
         </GovUK.Tabs.List>
         <GovUK.Tabs.Panel selected={fileMode === 'csv'}>
-          <GovUK.Details summary="Show column headers required for each CSV file">
+          <GovUK.Details summary="Show column headers required for each CSV file - these must match exactly!">
             <b>Header:</b> <br />CHILD,SEX,DOB,ETHNIC,UPN,MOTHER,MC_DOB
             <br /><br />
             <b>Episodes:</b> <br /> CHILD,DECOM,RNE,LS,CIN,PLACE,PLACE_PROVIDER,DEC,REC,REASON_PLACE_CHANGE,HOME_POST,PL_POST,URN

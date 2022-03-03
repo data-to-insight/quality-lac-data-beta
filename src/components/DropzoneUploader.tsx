@@ -39,9 +39,9 @@ export default function DropzoneUploader({onFiles, description, accept, displaye
     if (error) {
       return <p style={{color: 'red'}}>{error}</p>
     } else if (isDragActive) {
-      return <p>Drop the relevant file(s) here ...</p>
+      return <p>Drop the file(s) here ...</p>
     } else if (displayedFiles.length === 0) {
-      return <p>Drag and drop relevant file(s) here, or click to select file(s)</p>
+      return <p>Drop file(s) here, or click to select</p>
     } else {
       return null
     }
